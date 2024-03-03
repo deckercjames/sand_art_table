@@ -8,6 +8,7 @@ screen -X quit
 
 # COMPILE
 # echo Compiling
+mkdir bin
 
 # if arduino-cli compile --clean -b "$FQBN" --output-dir ./bin/; then
 #     echo "Compilation Succeeded"
