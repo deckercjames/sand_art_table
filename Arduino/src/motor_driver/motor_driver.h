@@ -2,11 +2,11 @@
 #ifndef MOTOR_DRIVER_H__
 #define MOTOR_DRIVER_H__
 
-void init_motors();
+bool init_motors();
 
-void register_carriage();
+bool register_carriage();
 
-void set_new_target(unsigned int target_x, unsigned int target_y);
+void set_target_pos(unsigned int target_x, unsigned int target_y);
 bool at_target();
 void move_toward_target();
 

@@ -19,7 +19,7 @@ char *severity_prefixes[] = {
     [LOG_FATAL] = "[FATAL] ",
 };
 
-void logger_init()
+void init_logger()
 {
     Serial.begin(9600);
 }
@@ -34,10 +34,9 @@ static void log_message(log_severity_t msg_severity, char *msg)
     Serial.println(msg);
 }
 
-void log_fatal_halt(char *msg)
+void log_fatal(char *msg)
 {
     log_message(LOG_FATAL, msg);
-    while(1);
 }
 
 void log_error(char *msg)

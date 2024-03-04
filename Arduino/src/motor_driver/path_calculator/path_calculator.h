@@ -15,9 +15,9 @@ typedef struct move_one_instruction {
     uint8_t dir_2;
 } move_one_instruction_t;
 
-void set_target_pos(unsigned int target_x, unsigned int target_y);
-bool at_target();
-void move_toward_target(move_one_instruction_t *move_instr);
+void pc_set_target_pos(unsigned int target_x, unsigned int target_y);
+bool pc_at_target();
+void pc_move_toward_target(move_one_instruction_t *move_instr);
 
 extern unsigned int current_pos_x;
 extern unsigned int current_pos_y;

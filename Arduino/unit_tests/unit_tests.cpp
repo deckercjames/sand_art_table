@@ -21,11 +21,11 @@ bool test_move_adjacent_up()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(10, 11);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(10, 11);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(1, move_instr.steps_1);
     ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_1);
     ASSERT_INT_EQUALS(1, move_instr.steps_2);
@@ -37,11 +37,11 @@ bool test_move_adjacent_right()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(11, 10);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(11, 10);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(1, move_instr.steps_1);
     ASSERT_INT_EQUALS(FORWARD, move_instr.dir_1);
     ASSERT_INT_EQUALS(1, move_instr.steps_2);
@@ -53,11 +53,11 @@ bool test_move_adjacent_down()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(10, 9);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(10, 9);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(1, move_instr.steps_1);
     ASSERT_INT_EQUALS(FORWARD, move_instr.dir_1);
     ASSERT_INT_EQUALS(1, move_instr.steps_2);
@@ -69,11 +69,11 @@ bool test_move_adjacent_left()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(9, 10);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(9, 10);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(1, move_instr.steps_1);
     ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_1);
     ASSERT_INT_EQUALS(1, move_instr.steps_2);
@@ -85,11 +85,11 @@ bool test_move_diag_up_right()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(11, 11);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(11, 11);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(0, move_instr.steps_1);
     ASSERT_INT_EQUALS(2, move_instr.steps_2);
     ASSERT_INT_EQUALS(FORWARD, move_instr.dir_2);
@@ -100,11 +100,11 @@ bool test_move_diag_down_right()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(11, 9);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(11, 9);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(2, move_instr.steps_1);
     ASSERT_INT_EQUALS(FORWARD, move_instr.dir_1);
     ASSERT_INT_EQUALS(0, move_instr.steps_2);
@@ -115,11 +115,11 @@ bool test_move_diag_down_left()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(9, 9);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(9, 9);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(0, move_instr.steps_1);
     ASSERT_INT_EQUALS(2, move_instr.steps_2);
     ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_2);
@@ -130,11 +130,11 @@ bool test_move_diag_up_left()
 {
     current_pos_x = 10;
     current_pos_y = 10;
-    set_target_pos(9, 11);
-    ASSERT_FALSE(at_target());
+    pc_set_target_pos(9, 11);
+    ASSERT_FALSE(pc_at_target());
     move_one_instruction_t move_instr;
-    move_toward_target(&move_instr);
-    ASSERT_TRUE(at_target());
+    pc_move_toward_target(&move_instr);
+    ASSERT_TRUE(pc_at_target());
     ASSERT_INT_EQUALS(2, move_instr.steps_1);
     ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_1);
     ASSERT_INT_EQUALS(0, move_instr.steps_2);

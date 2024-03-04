@@ -28,7 +28,7 @@ int sign_delta_y;
 
 int error;
 
-void set_target_pos(unsigned int target_x, unsigned int target_y)
+void pc_set_target_pos(unsigned int target_x, unsigned int target_y)
 {
     target_pos_x = min(target_x, TABLE_DIM_X_MM);
     target_pos_y = min(target_y, TABLE_DIM_Y_MM);
@@ -55,30 +55,31 @@ void set_target_pos(unsigned int target_x, unsigned int target_y)
     error = delta_x + delta_y;
 }
 
-bool at_target()
+bool pc_at_target()
 {
     return (current_pos_x == target_pos_x) && (current_pos_y == target_pos_y);
 }
 
-move_one_instruction_t movement_lookups[] = {
+const move_one_instruction_t movement_lookups[] = {
     // X step = -1
-    [(0*3)+0] = {0, NA,       2, BACKWARD}, // Y step = -1   [down left]
-    [(0*3)+1] = {1, BACKWARD, 1, BACKWARD}, // Y step =  0   [left]
-    [(0*3)+2] = {2, BACKWARD, 0, NA      }, // Y step =  1   [up left]
+    {0, NA,       2, BACKWARD}, // Y step = -1   [down left]
+    {1, BACKWARD, 1, BACKWARD}, // Y step =  0   [left]
+    {2, BACKWARD, 0, NA      }, // Y step =  1   [up left]
     // X step = 0
-    [(1*3)+0] = {1, FORWARD,  1, BACKWARD}, // Y step = -1   [down]
-    [(1*3)+2] = {1, BACKWARD, 1, FORWARD }, // Y step =  1   [up]
+    {1, FORWARD,  1, BACKWARD}, // Y step = -1   [down]
+    {0, NA,       1, NA      }, // No Move: N/A
+    {1, BACKWARD, 1, FORWARD }, // Y step =  1   [up]
     // X step = 1
-    [(2*3)+0] = {2, FORWARD,  0, NA      }, // Y step = -1   [down right]
-    [(2*3)+1] = {1, FORWARD,  1, FORWARD }, // Y step =  0   [right]
-    [(2*3)+2] = {0, NA,       2, FORWARD }, // Y step =  1   [up right]
+    {2, FORWARD,  0, NA      }, // Y step = -1   [down right]
+    {1, FORWARD,  1, FORWARD }, // Y step =  0   [right]
+    {0, NA,       2, FORWARD }, // Y step =  1   [up right]
 };
 
-void move_toward_target(move_one_instruction_t *move_instr)
+void pc_move_toward_target(move_one_instruction_t *move_instr)
 {
     memset(move_instr, 0, sizeof(move_one_instruction_t));
     
-    if (at_target()) {
+    if (pc_at_target()) {
         return;
     }
     

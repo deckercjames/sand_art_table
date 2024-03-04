@@ -5,19 +5,40 @@
 #include "motor_driver/motor_driver.h"
 #include "led_strip/led_strip.h"
 
+#define HALT while(1)
+
 void main_setup()
 {
-    logger_init();
+    init_logger();
     log_info("Executing Setup **************************************");
 
-    init_motors();
+    if (!init_motors()) {
+        log_fatal("Could not initilize motors");
+        HALT;
+    }
     log_info("Motors Initilized");
     
-    // init_led_strip();
+    // if (!register_carriage()) {
+    //     log_fatal("Could not register motors");
+    //     HALT;
+    // }
+    // HALT;
     
-    register_carriage();
-    
-    // set_new_target(100, 100);
+    set_target_pos(200, 200);
+    while (!at_target()) {
+        move_toward_target();
+    }
+    log_debug("at pos 1");
+    set_target_pos(0, 400);
+    while (!at_target()) {
+        move_toward_target();
+    }
+    log_debug("at pos 2");
+    set_target_pos(0, 0);
+    while (!at_target()) {
+        move_toward_target();
+    }
+    log_debug("at pos 3");
 }
 
 

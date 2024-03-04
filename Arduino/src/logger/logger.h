@@ -2,9 +2,9 @@
 #ifndef LOGGER_H__
 #define LOGGER_H__
 
-void logger_init();
+void init_logger();
 
-void log_fatal_halt(char *str);
+void log_fatal(char *str);
 void log_error(char *str);
 void log_info(char *str);
 void log_debug(char *str);
