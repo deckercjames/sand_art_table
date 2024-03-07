@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "../../utils/utils.h"
+#include "../../config/config.h"
 
 // Redefine the stepper motor directions for implementation
 // Don't include the arduino header so we can unit test easier
@@ -13,9 +14,14 @@
 
 #define NA 0
 
+#define MM_TO_STEPS(mills) (((mills * STEPPER_MOTOR_STEPS) / BELT_TEETH_SPACING_MM) / TIMING_PULLY_TEETH)
+
+#define TABLE_SIZE_X_STEPS MM_TO_STEPS(TABLE_DIM_X_MM)
+#define TABLE_SIZE_Y_STEPS MM_TO_STEPS(TABLE_DIM_Y_MM)
+
 // Global Variables
-unsigned int current_pos_x;
-unsigned int current_pos_y;
+unsigned int current_pos_x = 0;
+unsigned int current_pos_y = 0;
 
 unsigned int target_pos_x;
 unsigned int target_pos_y;
@@ -28,7 +34,7 @@ int sign_delta_y;
 
 int error;
 
-void pc_set_target_pos(unsigned int target_x, unsigned int target_y)
+void set_target_pos(unsigned int target_x, unsigned int target_y)
 {
     target_pos_x = min(target_x, TABLE_DIM_X_MM);
     target_pos_y = min(target_y, TABLE_DIM_Y_MM);
@@ -55,7 +61,12 @@ void pc_set_target_pos(unsigned int target_x, unsigned int target_y)
     error = delta_x + delta_y;
 }
 
-bool pc_at_target()
+void set_target_position_gcode(const char *instr)
+{
+    
+}
+
+bool at_target()
 {
     return (current_pos_x == target_pos_x) && (current_pos_y == target_pos_y);
 }
@@ -75,11 +86,11 @@ const move_one_instruction_t movement_lookups[] = {
     {0, NA,       2, FORWARD }, // Y step =  1   [up right]
 };
 
-void pc_move_toward_target(move_one_instruction_t *move_instr)
+void get_motor_movement_instructions(move_one_instruction_t *move_instr)
 {
     memset(move_instr, 0, sizeof(move_one_instruction_t));
     
-    if (pc_at_target()) {
+    if (at_target()) {
         return;
     }
     

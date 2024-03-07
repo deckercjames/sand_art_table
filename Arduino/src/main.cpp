@@ -18,33 +18,23 @@ void main_setup()
     }
     log_info("Motors Initilized");
     
-    // if (!register_carriage()) {
-    //     log_fatal("Could not register motors");
-    //     HALT;
-    // }
-    // HALT;
-    
-    set_target_pos(200, 200);
-    while (!at_target()) {
-        move_toward_target();
+    if (!register_carriage()) {
+        log_fatal("Could not register motors");
+        HALT;
     }
-    log_debug("at pos 1");
-    set_target_pos(0, 400);
-    while (!at_target()) {
-        move_toward_target();
-    }
-    log_debug("at pos 2");
-    set_target_pos(0, 0);
-    while (!at_target()) {
-        move_toward_target();
-    }
-    log_debug("at pos 3");
 }
 
 
 void main_loop()
 {
-    // led_strip_loop();
-    // move_toward_target();
+    if (at_target()) {
+        // set next target
+    }
+    
+    move_one_instruction_t move_instr;
+    
+    get_motor_movement_instructions(&move_instr);
+    move_toward_target(&move_instr);
+    
 }
 

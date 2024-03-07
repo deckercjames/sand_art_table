@@ -5,16 +5,7 @@
 #include <Adafruit_MotorShield.h>
 
 #include "../logger/logger.h"
-#include "path_calculator/path_calculator.h"
-
-// Motor configurations
-#define MOTOR_SPEED_RPM 1000
-#define STEPPER_MOTOR_STEPS 200
-#define MOTOR_STEP_TYPE DOUBLE
-
-// Wiring Configuration
-#define LIMIT_SWITCH_X_PIN_INPUT 8
-#define LIMIT_SWITCH_Y_PIN_INPUT 6
+#include "../config/config.h"
 
 // The motors
 Adafruit_StepperMotor *motor_1;
@@ -130,39 +121,9 @@ bool register_carriage()
 }
 
 
-
-void set_target_pos(unsigned int target_x, unsigned int target_y)
+void move_toward_target(const move_one_instruction_t *move_instr)
 {
-    pc_set_target_pos(target_x, target_y);
-}
-
-bool at_target()
-{
-    return pc_at_target();
-}
-
-void move_toward_target()
-{
-    move_one_instruction_t move_instr;
-    
-    pc_move_toward_target(&move_instr);
-    
-    Serial.print("Step instruction: ");
-    Serial.print(current_pos_x);
-    Serial.print(", ");
-    Serial.print(current_pos_y);
-    Serial.print(", ");
-    Serial.print(move_instr.steps_1);
-    Serial.print(", ");
-    Serial.print(move_instr.steps_2);
-    Serial.print(", ");
-    Serial.print(move_instr.dir_1);
-    Serial.print(", ");
-    Serial.print(move_instr.dir_2);
-    Serial.print(", ");
-    Serial.println();
-    
-    motor_1->step(move_instr.steps_1, move_instr.dir_1, MOTOR_STEP_TYPE);
-    motor_2->step(move_instr.steps_2, move_instr.dir_2, MOTOR_STEP_TYPE);
+    motor_1->step(move_instr->steps_1, move_instr->dir_1, MOTOR_STEP_TYPE);
+    motor_2->step(move_instr->steps_2, move_instr->dir_2, MOTOR_STEP_TYPE);
 }
 
