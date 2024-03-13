@@ -194,7 +194,7 @@ const move_one_instruction_t movement_lookups[] = {
     {2, BACKWARD, 0, NA      }, // Y step =  1   [up left]
     // X step = 0
     {1, FORWARD,  1, BACKWARD}, // Y step = -1   [down]
-    {0, NA,       1, NA      }, // No Move: N/A
+    {0, NA,       0, NA      }, // No Move: N/A
     {1, BACKWARD, 1, FORWARD }, // Y step =  1   [up]
     // X step = 1
     {2, FORWARD,  0, NA      }, // Y step = -1   [down right]
