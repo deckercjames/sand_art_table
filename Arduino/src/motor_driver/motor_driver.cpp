@@ -34,6 +34,12 @@ bool init_motors()
     return true;
 }
 
+void release_motors()
+{
+    motor_1->release();
+    motor_2->release();
+}
+
 static bool _register_carriage_axis(unsigned int motor_1_dir, unsigned int motor_2_dir, int limit_pin, unsigned int max_steps)
 {
     // Validate motor directions

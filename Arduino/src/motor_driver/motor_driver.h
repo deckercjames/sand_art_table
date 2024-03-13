@@ -5,6 +5,7 @@
 #include "path_calculator/path_calculator.h"
 
 bool init_motors();
+void release_motors();
 
 bool register_carriage();
 

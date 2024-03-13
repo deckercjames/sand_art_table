@@ -5,7 +5,7 @@
 #include "motor_driver/motor_driver.h"
 #include "led_strip/led_strip.h"
 
-#define HALT while(1)
+#define HALT do { release_motors(); while(1); } while(0)
 
 void main_setup()
 {
@@ -22,6 +22,8 @@ void main_setup()
         log_fatal("Could not register motors");
         HALT;
     }
+    
+    set_target_position_gcode("G01 X100 Y100");
 }
 
 
