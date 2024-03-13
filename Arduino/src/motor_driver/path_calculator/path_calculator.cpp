@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../../utils/utils.h"
 #include "../../config/config.h"
@@ -15,15 +16,16 @@
 #define NA 0
 
 #define MM_TO_STEPS(mills) (((mills * STEPPER_MOTOR_STEPS) / BELT_TEETH_SPACING_MM) / TIMING_PULLY_TEETH)
+#define UM100_TO_STEPS(um100s) ((((um100s * STEPPER_MOTOR_STEPS) / BELT_TEETH_SPACING_MM) / TIMING_PULLY_TEETH) / 10)
 
 #define TABLE_SIZE_X_STEPS MM_TO_STEPS(TABLE_DIM_X_MM)
 #define TABLE_SIZE_Y_STEPS MM_TO_STEPS(TABLE_DIM_Y_MM)
 
 // Global Variables
-unsigned int current_pos_x = 0;
+unsigned int current_pos_x = 0; // measured in steps
 unsigned int current_pos_y = 0;
 
-unsigned int target_pos_x;
+unsigned int target_pos_x; // measured in steps
 unsigned int target_pos_y;
 
 int delta_x;
@@ -34,10 +36,10 @@ int sign_delta_y;
 
 int error;
 
-void set_target_pos(unsigned int target_x, unsigned int target_y)
+void set_target_pos_steps(unsigned int target_x, unsigned int target_y)
 {
-    target_pos_x = min(target_x, TABLE_DIM_X_MM);
-    target_pos_y = min(target_y, TABLE_DIM_Y_MM);
+    target_pos_x = min(target_x, TABLE_SIZE_X_STEPS);
+    target_pos_y = min(target_y, TABLE_SIZE_Y_STEPS);
     
     // set x variables
     if (target_pos_x > current_pos_x) {
@@ -61,13 +63,127 @@ void set_target_pos(unsigned int target_x, unsigned int target_y)
     error = delta_x + delta_y;
 }
 
+enum gcode_parse_state  {
+    GCODE_STATE_PENDING_INSTR,
+    GCODE_STATE_PARSE_INSTR_NUMBER,
+    GCODE_STATE_PARSE_INSTR_COMPLETE,
+    GCODE_STATE_PENDING_ARG,
+    GCODE_STATE_PARSE_ARG,
+    GCODE_STATE_PROCESS_ARG,
+    GCODE_STATE_SKIP_ARG,
+};
+
 void set_target_position_gcode(const char *instr)
 {
+    int idx = 0;
+    char c;
+    char current_arg_id; // The arg that is currently being parsed. Either 'X' or 'Y'
+    char current_arg_val[10];
+    int current_arg_val_idx;
     
+    unsigned int new_target_x = target_pos_x;
+    unsigned int new_target_y = target_pos_y;
+    
+    enum gcode_parse_state state = GCODE_STATE_PENDING_INSTR;
+    
+    // printf("\nhere\n");
+    
+    while (1)
+    {
+        c = instr[idx];
+        if (c == ';') {
+            break;
+        }
+        
+        // printf("state = %d; [%c]\n", state, c);
+
+        switch (state)
+        {
+            case GCODE_STATE_PENDING_INSTR:
+                if (c == ' ') {
+                    break;
+                }
+                if (c != 'G') {
+                    return;
+                }
+                state = GCODE_STATE_PARSE_INSTR_NUMBER;
+                break;
+            case GCODE_STATE_PARSE_INSTR_NUMBER:
+                if (c == '0') {
+                    break;
+                }
+                if (c == '1') {
+                    state = GCODE_STATE_PARSE_INSTR_COMPLETE;
+                    break;
+                }
+                return;
+            case GCODE_STATE_PARSE_INSTR_COMPLETE:
+                if (c != ' ') {
+                    return;
+                }
+                state = GCODE_STATE_PENDING_ARG;
+                break;
+            case GCODE_STATE_PENDING_ARG:
+                if (c == ' ') {
+                    break;
+                }
+                if (c == 'X' || c == 'Y') {
+                    state = GCODE_STATE_PARSE_ARG;
+                    current_arg_id = c;
+                    current_arg_val_idx = 0;
+                    break;
+                }
+                state = GCODE_STATE_SKIP_ARG;
+                break;
+            case GCODE_STATE_PARSE_ARG:
+                if (c == ' ' || c == '\0') {
+                    state = GCODE_STATE_PROCESS_ARG;
+                    continue;
+                }
+                if (current_arg_val_idx == sizeof(current_arg_val) - 1) {
+                    state = GCODE_STATE_SKIP_ARG;
+                    break;
+                }
+                current_arg_val[current_arg_val_idx++] = c;
+                break;
+            case GCODE_STATE_PROCESS_ARG:
+            {
+                current_arg_val[current_arg_val_idx] = '\0';
+                // printf("Processing Arg %c '%s'\n", c, current_arg_val);
+                float f = atof(current_arg_val);
+                f *= 10;
+                f = max(f, 0.0f);
+                if (current_arg_id == 'X') {
+                    new_target_x = UM100_TO_STEPS((unsigned int) f);
+                    // printf("Setting x to f%f --> %d\n", f, target_pos_x);
+                } else if (current_arg_id == 'Y') {
+                    new_target_y = UM100_TO_STEPS((unsigned int) f);
+                    // printf("Setting y to f%f --> %d\n", f, target_pos_y);
+                }
+                state = GCODE_STATE_PENDING_ARG;
+                break;
+            }
+            case GCODE_STATE_SKIP_ARG:
+                if (c != ' ') {
+                    break;
+                }
+                state = GCODE_STATE_PENDING_ARG;
+                break;
+        }
+        
+        if (c == '\0') {
+            break;
+        }
+
+        idx++;
+    }
+    
+    set_target_pos_steps(new_target_x, new_target_y);
 }
 
 bool at_target()
 {
+    // printf("(%u, %u) :: (%u, %u)\n", current_pos_x, current_pos_y, target_pos_x, target_pos_y);
     return (current_pos_x == target_pos_x) && (current_pos_y == target_pos_y);
 }
 

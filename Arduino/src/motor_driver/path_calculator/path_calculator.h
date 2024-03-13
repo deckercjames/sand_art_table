@@ -12,7 +12,7 @@ typedef struct move_one_instruction {
 } move_one_instruction_t;
 
 
-void set_target_pos(unsigned int target_x, unsigned int target_y);
+void set_target_pos_steps(unsigned int target_x, unsigned int target_y);
 bool at_target();
 void get_motor_movement_instructions(move_one_instruction_t *move_instr);
 void set_target_position_gcode(const char *instr);
