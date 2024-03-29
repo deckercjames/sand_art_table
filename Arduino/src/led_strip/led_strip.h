@@ -3,6 +3,6 @@
 #define LED_STRIP_H__
 
 void init_led_strip();
-void led_strip_loop();
+void update_led_strip();
 
 #endif //ADD_H__

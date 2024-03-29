@@ -7,6 +7,8 @@ PORT="/dev/cu.usbmodem141401"
 
 # COMPILE
 
+echo
+
 mkdir -p bin/
 
 if arduino-cli compile --clean -b "$FQBN" --output-dir ./bin/; then

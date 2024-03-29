@@ -10,6 +10,8 @@
 Adafruit_StepperMotor *motor_1;
 Adafruit_StepperMotor *motor_2;
 
+bool motors_thero_throttling;
+
 bool init_motors()
 {
     // Initilize Limit Switches
@@ -30,6 +32,8 @@ bool init_motors()
     motor_1->setSpeed(MOTOR_SPEED_RPM);
     motor_2->setSpeed(MOTOR_SPEED_RPM);
     
+    motors_thero_throttling = false;
+    
     return true;
 }
 
@@ -37,6 +41,25 @@ void release_motors()
 {
     motor_1->release();
     motor_2->release();
+}
+
+bool thermo_throtle_motors(float temp_f)
+{
+    if (temp_f > MOTOR_OPERATING_TEMP_F)
+    {
+        motors_thero_throttling = true;
+        release_motors();
+    }
+    else if (temp_f < MOTOR_TURN_ON_TEMP_F)
+    {
+        motors_thero_throttling = false;
+        register_carriage();
+        // reset the target pos so it is on the target. This avoid incorrect delta
+        // calculations form moving without using the move_toward_target_function
+        set_target_pos_steps(0, 0);
+    }
+    
+    return motors_thero_throttling;
 }
 
 static bool _register_carriage_axis(unsigned int motor_1_dir, unsigned int motor_2_dir, int limit_pin, unsigned int max_steps)

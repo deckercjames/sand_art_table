@@ -5,6 +5,8 @@
 #include "motor_driver/motor_driver.h"
 #include "led_strip/led_strip.h"
 #include "config/config.h"
+#include "thermometrics/thermo.h"
+#include "cooling_fans/fans.h"
 
 #define HALT do { release_motors(); while(1); } while(0)
 
@@ -29,7 +31,14 @@ void main_setup()
         HALT;
     }
     
-    set_target_position_gcode("G01 X100 Y100");
+    init_led_strip();
+    
+    if (!init_thermometer()) {
+        Serial.println(F("Could not init thermometer"));
+        HALT;
+    }
+    
+    init_fans();
 }
 
 
@@ -37,6 +46,16 @@ void main_loop()
 {
     char line_buffer[LINE_BUFFER_SIZE];
 
+    update_led_strip();
+    
+    float temp_f = check_thermometer();
+    
+    control_fans(temp_f);
+    
+    if (thermo_throtle_motors(temp_f)) {
+        return;
+    }
+    
     // Read next instruction if necesssary
     if (at_target()) {
         // set next target
@@ -44,12 +63,13 @@ void main_loop()
         set_target_position_gcode(line_buffer);
     }
     
-    // Move to target
-    if (!at_target()) { // guard again incase the next instruction was a noop (e.g. a gcode comment)
-        move_one_instruction_t move_instr;
-        get_motor_movement_instructions(&move_instr);
-        move_toward_target(&move_instr);
+    // guard again incase the next instruction was a noop (e.g. a gcode comment)
+    if (at_target()) {
+        return;
     }
     
+    move_one_instruction_t move_instr;
+    get_motor_movement_instructions(&move_instr);
+    move_toward_target(&move_instr);
 }
 
