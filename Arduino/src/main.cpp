@@ -7,34 +7,35 @@
 #include "config/config.h"
 #include "thermometrics/thermo.h"
 #include "cooling_fans/fans.h"
+#include "utils/logging.h"
 
 #define HALT do { release_motors(); while(1); } while(0)
 
 void main_setup()
 {
     Serial.begin(9600);
-    Serial.println(F("Executing Setup **************************************"));
+    log_debug("Executing Setup **************************************");
 
     if (!init_motors()) {
-        Serial.println(F("Could not initilize motors"));
+        log_fatal("Could not initilize motors");
         HALT;
     }
-    Serial.println(F("Motors Initilized"));
+    log_info("Motors Initilized");
     
     if (!init_sd_card()) {
-        Serial.println(F("Could not init sd card"));
+        log_fatal("Could not init sd card");
         HALT;
     }
     
     if (!register_carriage()) {
-        Serial.println(F("Could not register motors"));
+        log_fatal("Could not register motors");
         HALT;
     }
     
     init_led_strip();
     
     if (!init_thermometer()) {
-        Serial.println(F("Could not init thermometer"));
+        log_fatal("Could not init thermometer");
         HALT;
     }
     

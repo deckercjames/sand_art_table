@@ -5,6 +5,7 @@
 #include <Adafruit_MotorShield.h>
 
 #include "../config/config.h"
+#include "../utils/logging.h"
 
 // The motors
 Adafruit_StepperMotor *motor_1;
@@ -25,7 +26,7 @@ bool init_motors()
     motor_2 = AFMS.getStepper(STEPPER_MOTOR_STEPS, 2);
     
     if (!AFMS.begin()) {
-        Serial.println(F("Could not start motor sheild"));
+        log_error("Could not start motor sheild");
         return false;
     }
     
@@ -67,12 +68,12 @@ static bool _register_carriage_axis(unsigned int motor_1_dir, unsigned int motor
     // Validate motor directions
     if (motor_1_dir != FORWARD && motor_1_dir != BACKWARD)
     {
-        Serial.println(F("Can not register axis. Invalid direction for motor 1"));
+        log_error("Can not register axis. Invalid direction for motor 1");
         return false;
     }
     if (motor_2_dir != FORWARD && motor_2_dir != BACKWARD)
     {
-        Serial.println(F("Can not register axis. Invalid direction for motor 2"));
+        log_error("Can not register axis. Invalid direction for motor 2");
         return false;
     }
     
@@ -85,14 +86,14 @@ static bool _register_carriage_axis(unsigned int motor_1_dir, unsigned int motor
     while (digitalRead(limit_pin) == LOW)
     {
         if (registration_steps_taken >= max_steps) {
-            Serial.println(F("Max Regestration steps reached"));
+            log_error("Max Regestration steps reached on forward");
             return false;
         }
         motor_1->step(1, motor_1_dir, MOTOR_STEP_TYPE);
         motor_2->step(1, motor_2_dir, MOTOR_STEP_TYPE);
         registration_steps_taken++;
     }
-    Serial.println(F("Triggered limit switch"));
+    log_debug("Triggered limit switch");
     
     // Debounce switch
     delay(1000);
@@ -106,14 +107,14 @@ static bool _register_carriage_axis(unsigned int motor_1_dir, unsigned int motor
     while (digitalRead(limit_pin) == HIGH)
     {
         if (registration_steps_taken >= max_steps) {
-            Serial.println(F("Max Regestration steps reached"));
+            log_error("Max Regestration steps reached on back move");
             return false;
         }
         motor_1->step(1, motor_1_dir_reverse, MOTOR_STEP_TYPE);
         motor_2->step(1, motor_2_dir_reverse, MOTOR_STEP_TYPE);
         registration_steps_taken++;
     }
-    Serial.println(F("Released limit switch. Axis register complete."));
+    log_debug("Released limit switch. Axis register complete.");
     
     return true;
 }
@@ -125,26 +126,26 @@ static bool _register_carriage_axis(unsigned int motor_1_dir, unsigned int motor
 */
 bool register_carriage()
 {
-    Serial.println("Registering Carriage...");
+    log_debug("Registering Carriage...");
     
     // Move Y to zero
-    Serial.println(F("Regestering Y axis..."));
+    log_debug("Regestering Y axis...");
     if (!_register_carriage_axis(FORWARD, BACKWARD, LIMIT_SWITCH_Y_PIN_INPUT, TABLE_DIM_Y_MM)) {
         return false;
     }
-    Serial.println(F("Y axis registered."));
+    log_debug("Y axis registered.");
     
     // Move X to zero
-    Serial.println(F("Regestering X axis..."));
+    log_debug("Regestering X axis...");
     if (!_register_carriage_axis(BACKWARD, BACKWARD, LIMIT_SWITCH_X_PIN_INPUT, TABLE_DIM_X_MM)) {
         return false;
     }
-    Serial.println(F("X axis registered."));
+    log_debug("X axis registered.");
     
     current_pos_x = 0;
     current_pos_y = 0;
     
-    Serial.println(F("Carriage registration complete."));
+    log_debug("Carriage registration complete.");
     return true;
 }
 
