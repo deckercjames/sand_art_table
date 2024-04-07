@@ -22,8 +22,8 @@ bool init_motors()
     // Initilize Motors
     Adafruit_MotorShield AFMS = Adafruit_MotorShield();
     
-    motor_1 = AFMS.getStepper(STEPPER_MOTOR_STEPS, 1);
-    motor_2 = AFMS.getStepper(STEPPER_MOTOR_STEPS, 2);
+    motor_1 = AFMS.getStepper(STEPPER_MOTOR_STEPS, LEFT_MOTOR_IDX);
+    motor_2 = AFMS.getStepper(STEPPER_MOTOR_STEPS, RIGHT_MOTOR_IDX);
     
     if (!AFMS.begin()) {
         log_error("Could not start motor sheild");

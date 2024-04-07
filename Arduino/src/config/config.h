@@ -11,6 +11,8 @@
 #define LIMIT_SWITCH_Y_PIN_INPUT (6)
 
 // Motors
+#define LEFT_MOTOR_IDX (2)
+#define RIGHT_MOTOR_IDX (1)
 #define MOTOR_SPEED_RPM (255) // between [1, 225]
 #define STEPPER_MOTOR_STEPS (200)
 #define MOTOR_STEP_TYPE (DOUBLE)
