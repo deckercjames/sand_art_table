@@ -7,8 +7,8 @@
 #define TABLE_DIM_Y_MM (10000)
 
 // Limit Switches
-#define LIMIT_SWITCH_X_PIN_INPUT (8)
-#define LIMIT_SWITCH_Y_PIN_INPUT (6)
+#define LIMIT_SWITCH_X_PIN_INPUT (9)
+#define LIMIT_SWITCH_Y_PIN_INPUT (7)
 
 // Motors
 #define LEFT_MOTOR_IDX (2)
