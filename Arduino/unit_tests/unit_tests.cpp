@@ -15,8 +15,8 @@
 #define FORWARD 1
 #define BACKWARD 2
 
-#define UM100_TO_STEPS(x) (x / 2)
-#define MM_TO_STEPS(x) (x * 5)
+#define UM100_TO_STEPS(x) ((x) / 2)
+#define TEST_MM_TO_STEPS(x) ((x) * 5)
 
 //***************************************
 // Get Movement Tests
@@ -452,7 +452,7 @@ bool test_gcode_x_too_large()
 {
     set_target_position_gcode("G1 X99999999 Y20");
     // Use at_target to check that the target pos was set correctly
-    current_pos_x = MM_TO_STEPS(TABLE_DIM_X_MM);
+    current_pos_x = TEST_MM_TO_STEPS(TABLE_DIM_X_MM);
     current_pos_y = UM100_TO_STEPS(200);
     ASSERT_TRUE(at_target());
     return true;
@@ -463,7 +463,7 @@ bool test_gcode_y_too_large()
     set_target_position_gcode("G1 X10 Y99999999");
     // Use at_target to check that the target pos was set correctly
     current_pos_x = UM100_TO_STEPS(100);
-    current_pos_y = MM_TO_STEPS(TABLE_DIM_Y_MM);
+    current_pos_y = TEST_MM_TO_STEPS(TABLE_DIM_Y_MM);
     ASSERT_TRUE(at_target());
     return true;
 }

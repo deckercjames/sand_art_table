@@ -3,8 +3,11 @@
 #define CONFIG_H__
 
 // Sand Table Size
-#define TABLE_DIM_X_MM (10000)
-#define TABLE_DIM_Y_MM (10000)
+#define TABLE_DIM_X_MM (900)
+#define TABLE_DIM_Y_MM (550)
+
+#define SAND_BOX_OFFSET_X_MM (9)
+#define SAND_BOX_OFFSET_Y_MM (16)
 
 // Limit Switches
 #define LIMIT_SWITCH_X_PIN_INPUT (9)
@@ -16,10 +19,11 @@
 #define MOTOR_SPEED_RPM (255) // between [1, 225]
 #define STEPPER_MOTOR_STEPS (200)
 #define MOTOR_STEP_TYPE (DOUBLE)
-#define TIMING_PULLY_TEETH (20)
-#define BELT_TEETH_SPACING_MM (2)
+#define MOTOR_REGISTER_EXTRA_DIST_MM (50)
 #define MOTOR_OPERATING_TEMP_F (95)
 #define MOTOR_TURN_ON_TEMP_F (80)
+
+#define MM_TO_STEPS(mills) ((mills) * 5)
 
 // SD Card
 #define CARD_SELECT_PIN (10)

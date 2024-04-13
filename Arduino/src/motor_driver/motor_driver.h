@@ -13,6 +13,6 @@ bool thermo_throtle_motors(float temp_f);
 
 void set_target_pos(unsigned int target_x, unsigned int target_y);
 bool at_target();
-void move_toward_target(const move_one_instruction_t *move_instr);
+void move_toward_target();
 
 #endif //ADD_H__

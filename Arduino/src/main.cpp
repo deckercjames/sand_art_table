@@ -16,28 +16,29 @@ void main_setup()
     Serial.begin(9600);
     log_debug("Executing Setup **************************************");
 
+    init_led_strip();
+    
     if (!init_motors()) {
         log_fatal("Could not initilize motors");
         HALT;
     }
     log_info("Motors Initilized");
     
-    if (!init_sd_card()) {
-        log_fatal("Could not init sd card");
-        HALT;
-    }
+    // if (!init_sd_card()) {
+    //     log_fatal("Could not init sd card");
+    //     HALT;
+    // }
     
     if (!register_carriage()) {
         log_fatal("Could not register motors");
         HALT;
     }
+    log_info("Carriage registration complete.");
     
-    init_led_strip();
-    
-    if (!init_thermometer()) {
-        log_fatal("Could not init thermometer");
-        HALT;
-    }
+    // if (!init_thermometer()) {
+    //     log_fatal("Could not init thermometer");
+    //     HALT;
+    // }
     
     init_fans();
 }
@@ -46,21 +47,21 @@ void main_setup()
 void main_loop()
 {
     char line_buffer[LINE_BUFFER_SIZE];
-
-    update_led_strip();
     
-    float temp_f = check_thermometer();
+    // update_led_strip();
     
-    control_fans(temp_f);
+    // float temp_f = check_thermometer();
     
-    if (thermo_throtle_motors(temp_f)) {
-        return;
-    }
+    // control_fans(temp_f);
+    
+    // if (thermo_throtle_motors(temp_f)) {
+    //     return;
+    // }
     
     // Read next instruction if necesssary
     if (at_target()) {
         // set next target
-        get_next_line(line_buffer, sizeof(line_buffer));
+        get_test_line(line_buffer, sizeof(line_buffer));
         set_target_position_gcode(line_buffer);
     }
     
@@ -69,8 +70,6 @@ void main_loop()
         return;
     }
     
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
-    move_toward_target(&move_instr);
+    move_toward_target();
 }
 

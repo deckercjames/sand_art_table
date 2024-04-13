@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FQBN="arduino:avr:uno"
+FQBN="arduino:avr:mega"
 PORT="/dev/cu.usbmodem141401"
 
 # Verify
@@ -8,6 +8,10 @@ PORT="/dev/cu.usbmodem141401"
 mkdir -p bin/
 
 ./verify.sh
+if [ $? -ne 0 ]; then
+    echo "Compile Failed"
+    exit 1
+fi
 
 # CLOSE ANY OEN SCREEN
 screen -X quit

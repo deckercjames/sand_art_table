@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FQBN="arduino:avr:uno"
+FQBN="arduino:avr:mega"
 PORT="/dev/cu.usbmodem141401"
 
 ./run_unit_tests.sh

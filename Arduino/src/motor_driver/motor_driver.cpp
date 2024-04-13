@@ -130,14 +130,14 @@ bool register_carriage()
     
     // Move Y to zero
     log_debug("Regestering Y axis...");
-    if (!_register_carriage_axis(FORWARD, BACKWARD, LIMIT_SWITCH_Y_PIN_INPUT, TABLE_DIM_Y_MM)) {
+    if (!_register_carriage_axis(FORWARD, BACKWARD, LIMIT_SWITCH_Y_PIN_INPUT, MM_TO_STEPS(TABLE_DIM_Y_MM + MOTOR_REGISTER_EXTRA_DIST_MM))) {
         return false;
     }
     log_debug("Y axis registered.");
     
     // Move X to zero
     log_debug("Regestering X axis...");
-    if (!_register_carriage_axis(BACKWARD, BACKWARD, LIMIT_SWITCH_X_PIN_INPUT, TABLE_DIM_X_MM)) {
+    if (!_register_carriage_axis(BACKWARD, BACKWARD, LIMIT_SWITCH_X_PIN_INPUT, MM_TO_STEPS(TABLE_DIM_X_MM + MOTOR_REGISTER_EXTRA_DIST_MM))) {
         return false;
     }
     log_debug("X axis registered.");
@@ -145,14 +145,27 @@ bool register_carriage()
     current_pos_x = 0;
     current_pos_y = 0;
     
-    log_debug("Carriage registration complete.");
+    // Move to sand box offset
+    log_debug("Moving to sandbox offset...");
+    set_target_pos_steps(MM_TO_STEPS(SAND_BOX_OFFSET_X_MM), MM_TO_STEPS(SAND_BOX_OFFSET_Y_MM));
+    while (!at_target()) {
+        move_toward_target();
+    }
+    log_debug("Carriage at origin.");
+    
+    current_pos_x = 0;
+    current_pos_y = 0;
+    
+    set_target_pos_steps(0, 0);
+
     return true;
 }
 
-
-void move_toward_target(const move_one_instruction_t *move_instr)
+void move_toward_target()
 {
-    motor_1->step(move_instr->steps_1, move_instr->dir_1, MOTOR_STEP_TYPE);
-    motor_2->step(move_instr->steps_2, move_instr->dir_2, MOTOR_STEP_TYPE);
+    move_one_instruction_t move_instr;
+    get_motor_movement_instructions(&move_instr);
+    
+    motor_1->step(move_instr.steps_1, move_instr.dir_1, MOTOR_STEP_TYPE);
+    motor_2->step(move_instr.steps_2, move_instr.dir_2, MOTOR_STEP_TYPE);
 }
-

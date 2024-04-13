@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../utils/utils.h"
 #include "../../config/config.h"
 
 // Redefine the stepper motor directions for implementation
@@ -14,12 +13,6 @@
 #define BACKWARD 2
 
 #define NA 0
-
-#define MM_TO_STEPS(mills) (((mills * STEPPER_MOTOR_STEPS) / BELT_TEETH_SPACING_MM) / TIMING_PULLY_TEETH)
-#define UM100_TO_STEPS(um100s) ((((um100s * STEPPER_MOTOR_STEPS) / BELT_TEETH_SPACING_MM) / TIMING_PULLY_TEETH) / 10)
-
-#define TABLE_SIZE_X_STEPS MM_TO_STEPS(TABLE_DIM_X_MM)
-#define TABLE_SIZE_Y_STEPS MM_TO_STEPS(TABLE_DIM_Y_MM)
 
 // Global Variables
 unsigned int current_pos_x = 0; // measured in steps
@@ -149,16 +142,12 @@ void set_target_position_gcode(const char *instr)
             case GCODE_STATE_PROCESS_ARG:
             {
                 current_arg_val[current_arg_val_idx] = '\0';
-                // printf("Processing Arg %c '%s'\n", c, current_arg_val);
-                float f = atof(current_arg_val);
-                f *= 10;
-                f = max(f, 0.0f);
+                float mm = atof(current_arg_val);
+                mm = max(mm, 0.0f);
                 if (current_arg_id == 'X') {
-                    new_target_x = UM100_TO_STEPS((unsigned int) f);
-                    // printf("Setting x to f%f --> %d\n", f, target_pos_x);
+                    new_target_x = (unsigned int) MM_TO_STEPS(mm);
                 } else if (current_arg_id == 'Y') {
-                    new_target_y = UM100_TO_STEPS((unsigned int) f);
-                    // printf("Setting y to f%f --> %d\n", f, target_pos_y);
+                    new_target_y = (unsigned int) MM_TO_STEPS(mm);
                 }
                 state = GCODE_STATE_PENDING_ARG;
                 break;
@@ -183,7 +172,6 @@ void set_target_position_gcode(const char *instr)
 
 bool at_target()
 {
-    // printf("(%u, %u) :: (%u, %u)\n", current_pos_x, current_pos_y, target_pos_x, target_pos_y);
     return (current_pos_x == target_pos_x) && (current_pos_y == target_pos_y);
 }
 

@@ -43,3 +43,27 @@ void get_next_line(char *buf, unsigned int buf_size)
     
     buf[i] = 0;
 }
+
+
+
+// TESTING
+
+char *commands[] = {
+    "G01 X0 Y1000",
+    "G01 X1000 Y1000",
+    "G01 X1000 Y0"
+};
+
+int on_idx = 0;
+
+void get_test_line(char *buf, unsigned int buf_size)
+{
+    int i = 0;
+    while (commands[on_idx][i] && i<buf_size) {
+        buf[i] = commands[on_idx][i];
+        i++;
+    }
+    on_idx++;
+    if (on_idx == 4) while(1);
+    // on_idx %= 3;
+}
