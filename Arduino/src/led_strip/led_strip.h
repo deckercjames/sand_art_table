@@ -5,4 +5,4 @@
 void init_led_strip();
 void update_led_strip();
 
-#endif //ADD_H__
+#endif //LED_STRIP_H__

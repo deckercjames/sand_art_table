@@ -1,25 +1,35 @@
 #!/usr/bin/env bash
 
-FQBN="arduino:avr:mega"
-PORT="/dev/cu.usbmodem141401"
+FQBN="arduino:avr:nano"
+PORT="/dev/cu.usbserial-1410"
+
+# Validate scripts args
+if [ $# -eq 0 ]; then
+    echo "Requires one argument for board selection"
+    exit 1
+fi
+if [ "$1" != "lighting" ] && [ "$1" != "sd_card" ] && [ "$1" != "motor" ]; then
+    echo "invalid board"
+    exit 1
+fi
 
 # Verify
 
 mkdir -p bin/
 
-./verify.sh
+./verify.sh "$1"
 if [ $? -ne 0 ]; then
     echo "Compile Failed"
     exit 1
 fi
 
-# CLOSE ANY OEN SCREEN
+# CLOSE ANY OPEN SCREENS
 screen -X quit
 
 # UPLOAD
 echo Uploading
 
-arduino-cli upload -b "$FQBN" -p "$PORT" -i ./bin/Arduino.ino.hex
+arduino-cli upload -b "$FQBN" -p "$PORT" -i ./bin/${1}_board.ino.hex
 
 if [ $? -ne 0 ]; then
     echo "Upload Failed"

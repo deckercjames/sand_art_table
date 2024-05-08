@@ -1,0 +1,12 @@
+
+G01 X0 Y1000
+; this is a comment
+; this is a comment
+; this is a comment
+; this is a comment
+G01 X1000 Y1000
+; this is a comment
+; this is a comment
+; this is a comment
+; this is a comment
+G01 X1000 Y0

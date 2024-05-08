@@ -6,6 +6,7 @@
 
 #include "../config/config.h"
 #include "../utils/utils.h"
+#include "../utils/logging.h"
 
 Adafruit_MCP9808 tempsensor;
 unsigned long next_read_time;
@@ -26,16 +27,20 @@ bool init_thermometer()
     return true;
 }
 
+bool reached_next_temp_poll_time()
+{
+    return millis() >= next_read_time;
+}
+
 float check_thermometer()
 {
     unsigned long current_time = millis();
     
-    if (current_time >= next_read_time) {
-        tempsensor.wake();
-        current_temp = tempsensor.readTempC();
-        tempsensor.shutdown();
-        next_read_time = THERMO_CHECK_INTERVAL_SECS * SECS_TO_MILLIS;
-    }
+    tempsensor.wake();
+    current_temp = tempsensor.readTempF();
+    tempsensor.shutdown();
     
+    next_read_time = current_time + (THERMO_CHECK_INTERVAL_SECS * SECS_TO_MILLIS);
+
     return current_temp;
 }
