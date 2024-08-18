@@ -8,6 +8,8 @@
 #include "sd_card/sd_card.h"
 #include "utils/logging.h"
 #include "motor_driver/motor_driver.h"
+#include "motor_driver/motor_utils.h"
+#include "motor_driver/path_calculator/path_calculator.h"
 
 #define HALT do { release_motors(); while(1); } while(0)
 
@@ -31,14 +33,25 @@ static bool _next_instruction_ready()
     return digitalRead(INSTRUCTION_READY_PIN_IN) == INSTRUCTION_READY;
 }
 
-static uint32_t _get_next_position_from_wire()
+static void _get_next_position_from_wire(location_msg_t *location)
 {
+    uint8_t *received_buffer = (uint8_t *) location;
+    
+    int index = 0;
+    
+    location->x_location_steps = 0;
+    location->y_location_steps = 0;
+    
     Wire.requestFrom(SD_CARD_BOARD_I2C_ADDR, 6);
     
-    uint32_t target_pos = 0;
-    
     while (Wire.available()) { // peripheral may send less than requested
-        char c = Wire.read(); // receive a byte as character
+        char c = Wire.read();
+        // Discard any extra bytes
+        if (index >= sizeof(received_buffer)) {
+            continue;
+        }
+        received_buffer[index] = (uint8_t) c;
+        index++;
     }
 }
 
@@ -49,7 +62,9 @@ void motor_board_loop()
         if (!_next_instruction_ready()) {
             return;
         }
-        uint32_t target_position = _get_next_position_from_wire();
+        location_msg_t target_position;
+        _get_next_position_from_wire(&target_position);
+        set_target_pos_steps(target_position.x_location_steps, target_position.y_location_steps);
     }
     
     service_motors();

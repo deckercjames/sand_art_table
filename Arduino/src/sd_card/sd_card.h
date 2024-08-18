@@ -4,9 +4,12 @@
 
 bool init_sd_card();
 
-void open_next_file();
+bool open_next_file();
+
+bool file_completed();
 
 void get_next_line(char *buf, unsigned int buf_size);
-void get_test_line(char *buf, unsigned int buf_size);
+
+void close_current_file();
 
 #endif //SD_CARD

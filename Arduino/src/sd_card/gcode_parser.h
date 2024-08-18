@@ -2,6 +2,8 @@
 #ifndef GCODE_PARSER_H__
 #define GCODE_PARSER_H__
 
-void set_target_position_gcode(const char *instr, int *new_target_x, int *new_target_y);
+#include "../motor_driver/motor_utils.h"
+
+void parse_gcode_line(const char *instr_buf, location_msg_t *new_target);
 
 #endif //GCODE_PARSER_H__

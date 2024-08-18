@@ -7,7 +7,7 @@
 #include "../config/config.h"
 
 enum gcode_parse_state  {
-    GCODE_STATE_PENDING_INSTR,
+    GCODE_STATE_PENDING_CMD,
     GCODE_STATE_PARSE_INSTR_NUMBER,
     GCODE_STATE_PARSE_INSTR_COMPLETE,
     GCODE_STATE_PENDING_ARG,
@@ -16,7 +16,7 @@ enum gcode_parse_state  {
     GCODE_STATE_SKIP_ARG,
 };
 
-void set_target_position_gcode(const char *instr, int *new_target_x, int *new_target_y)
+void parse_gcode_line(const char *instr_buf, location_msg_t *new_target)
 {
     int idx = 0;
     char c;
@@ -24,18 +24,18 @@ void set_target_position_gcode(const char *instr, int *new_target_x, int *new_ta
     char current_arg_val[10];
     int current_arg_val_idx;
 
-    enum gcode_parse_state state = GCODE_STATE_PENDING_INSTR;
+    enum gcode_parse_state state = GCODE_STATE_PENDING_CMD;
     
     while (1)
     {
-        c = instr[idx];
+        c = instr_buf[idx];
         if (c == ';') {
             break;
         }
         
         switch (state)
         {
-            case GCODE_STATE_PENDING_INSTR:
+            case GCODE_STATE_PENDING_CMD:
                 if (c == ' ') {
                     break;
                 }
@@ -88,9 +88,9 @@ void set_target_position_gcode(const char *instr, int *new_target_x, int *new_ta
                 float mm = atof(current_arg_val);
                 mm = max(mm, 0.0f);
                 if (current_arg_id == 'X') {
-                    new_target_x = (unsigned int) MM_TO_STEPS(mm);
+                    new_target->x_location_steps = (unsigned int) MM_TO_STEPS(mm);
                 } else if (current_arg_id == 'Y') {
-                    new_target_y = (unsigned int) MM_TO_STEPS(mm);
+                    new_target->y_location_steps = (unsigned int) MM_TO_STEPS(mm);
                 }
                 state = GCODE_STATE_PENDING_ARG;
                 break;

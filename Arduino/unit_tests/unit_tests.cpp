@@ -28,13 +28,13 @@ bool test_move_adjacent_up()
     current_pos_y = 10;
     set_target_pos_steps(10, 11);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(1, move_instr.steps_1);
-    ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_1);
-    ASSERT_INT_EQUALS(1, move_instr.steps_2);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_2);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(BACKWARD, move_instr_t.dir_1);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_2);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_2);
     return true;
 }
 
@@ -44,13 +44,13 @@ bool test_move_adjacent_right()
     current_pos_y = 10;
     set_target_pos_steps(11, 10);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(1, move_instr.steps_1);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_1);
-    ASSERT_INT_EQUALS(1, move_instr.steps_2);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_2);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_1);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_2);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_2);
     return true;
 }
 
@@ -60,13 +60,13 @@ bool test_move_adjacent_down()
     current_pos_y = 10;
     set_target_pos_steps(10, 9);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(1, move_instr.steps_1);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_1);
-    ASSERT_INT_EQUALS(1, move_instr.steps_2);
-    ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_2);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_1);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_2);
+    ASSERT_INT_EQUALS(BACKWARD, move_instr_t.dir_2);
     return true;
 }
 
@@ -76,13 +76,13 @@ bool test_move_adjacent_left()
     current_pos_y = 10;
     set_target_pos_steps(9, 10);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(1, move_instr.steps_1);
-    ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_1);
-    ASSERT_INT_EQUALS(1, move_instr.steps_2);
-    ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_2);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(BACKWARD, move_instr_t.dir_1);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_2);
+    ASSERT_INT_EQUALS(BACKWARD, move_instr_t.dir_2);
     return true;
 }
 
@@ -92,12 +92,12 @@ bool test_move_diag_up_right()
     current_pos_y = 10;
     set_target_pos_steps(11, 11);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(0, move_instr.steps_1);
-    ASSERT_INT_EQUALS(2, move_instr.steps_2);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_2);
+    ASSERT_INT_EQUALS(0, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(2, move_instr_t.steps_2);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_2);
     return true;
 }
 
@@ -107,12 +107,12 @@ bool test_move_diag_down_right()
     current_pos_y = 10;
     set_target_pos_steps(11, 9);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(2, move_instr.steps_1);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_1);
-    ASSERT_INT_EQUALS(0, move_instr.steps_2);
+    ASSERT_INT_EQUALS(2, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_1);
+    ASSERT_INT_EQUALS(0, move_instr_t.steps_2);
     return true;
 }
 
@@ -122,12 +122,12 @@ bool test_move_diag_down_left()
     current_pos_y = 10;
     set_target_pos_steps(9, 9);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(0, move_instr.steps_1);
-    ASSERT_INT_EQUALS(2, move_instr.steps_2);
-    ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_2);
+    ASSERT_INT_EQUALS(0, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(2, move_instr_t.steps_2);
+    ASSERT_INT_EQUALS(BACKWARD, move_instr_t.dir_2);
     return true;
 }
 
@@ -137,12 +137,12 @@ bool test_move_diag_up_left()
     current_pos_y = 10;
     set_target_pos_steps(9, 11);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(2, move_instr.steps_1);
-    ASSERT_INT_EQUALS(BACKWARD, move_instr.dir_1);
-    ASSERT_INT_EQUALS(0, move_instr.steps_2);
+    ASSERT_INT_EQUALS(2, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(BACKWARD, move_instr_t.dir_1);
+    ASSERT_INT_EQUALS(0, move_instr_t.steps_2);
     return true;
 }
 
@@ -152,10 +152,10 @@ bool test_move_twice()
     current_pos_y = 10;
     set_target_pos_steps(9, 12);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_FALSE(at_target());
-    get_motor_movement_instructions(&move_instr);
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
     return true;
 }
@@ -499,13 +499,13 @@ bool test_gcode_and_move()
     current_pos_x = UM100_TO_STEPS(100);
     current_pos_y = UM100_TO_STEPS(200);
     ASSERT_FALSE(at_target());
-    move_one_instruction_t move_instr;
-    get_motor_movement_instructions(&move_instr);
+    move_one_instruction_t move_instr_t;
+    get_motor_movement_instructions(&move_instr_t);
     ASSERT_TRUE(at_target());
-    ASSERT_INT_EQUALS(1, move_instr.steps_1);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_1);
-    ASSERT_INT_EQUALS(1, move_instr.steps_2);
-    ASSERT_INT_EQUALS(FORWARD, move_instr.dir_2);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_1);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_1);
+    ASSERT_INT_EQUALS(1, move_instr_t.steps_2);
+    ASSERT_INT_EQUALS(FORWARD, move_instr_t.dir_2);
     return true;
 }
 

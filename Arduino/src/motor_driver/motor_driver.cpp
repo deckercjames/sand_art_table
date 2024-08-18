@@ -5,6 +5,7 @@
 
 #include "motor_utils.h"
 #include "motor_register.h"
+#include "path_calculator/path_calculator.h"
 #include "../config/config.h"
 #include "../utils/logging.h"
 
@@ -16,6 +17,7 @@ typedef enum {
     MOTOR_STATE_REGISTER_CARRIAGE,
     MOTOR_STATE_MOVING,
     MOTOR_STATE_THERMO_THROTTLE,
+    MOTOR_STATE_INSTRUCTION_PENDING,
     MOTOR_STATE_HALT,
 } motor_state_t;
 
@@ -42,7 +44,7 @@ bool init_motors()
     return true;
 }
 
-static void _make_movement(move_instr move)
+static void _make_movement(move_instr_t move)
 {
     // Set motor directions
     digitalWrite(LEFT_MOTOR_DIR_PIN,  ((move >> 7) & 0x01));
@@ -88,7 +90,7 @@ void service_motors()
                 break;
             }
             
-            move_instr movement;
+            move_instr_t movement;
             bool register_rc;
             register_rc = service_register_carriage(&movement);
             if (!register_rc) {
@@ -100,10 +102,23 @@ void service_motors()
             _make_movement(movement);
             break;
         }
+        case MOTOR_STATE_MOVING:
+        {
+            move_instr_t move = get_motor_movement_instruction();
+            _make_movement(move);
+            if (at_target()) {
+                motor_state = MOTOR_STATE_INSTRUCTION_PENDING;
+            }
+            break;
+        }
+        case MOTOR_STATE_INSTRUCTION_PENDING:
+        case MOTOR_STATE_HALT:
+        case MOTOR_STATE_THERMO_THROTTLE:
+            break;
     }
 }
 
 bool ready_for_next_instruction()
 {
-    return false;
+    return (motor_state == MOTOR_STATE_INSTRUCTION_PENDING);
 }

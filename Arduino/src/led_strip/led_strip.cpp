@@ -18,16 +18,27 @@ void init_led_strip()
 
 static void _duel_hue(unsigned int start_led, unsigned int start_hue, unsigned int hue_delta);
 
+
+
 void update_led_strip()
 {
+    // Read Pot Values
+    int brightness_val = analogRead(LED_BIGHTNESS_PIN);
+    int speed_val      = analogRead(LED_SPEED_PIN);
+    int pattern_val    = analogRead(LED_PATTERN_PIN);
+    
+    // Set brightness
+    strip.setBrightness(brightness_val >> 2);
+    
     unsigned long m = millis();
-    int a = (m * LED_COUNT / 1000);
+
+    int anchor_led_idk = (m * LED_COUNT / speed_val);
     
-    a /= 3;
+    anchor_led_idk /= 3;
     
-    unsigned int b = (m);
+    unsigned int start_hue = pattern_val << 6;
     
-    _duel_hue(a, b, 13553);
+    _duel_hue(anchor_led_idk, start_hue, 13553);
     
     strip.show();
 }

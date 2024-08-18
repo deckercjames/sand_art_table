@@ -52,7 +52,7 @@ bool registration_complete()
 /**
  * @returns true on successful iteration; false otherwise (if motors should be halted)
 */
-static bool _register_axis(move_instr *movement, int limit_switch_pin, int target_switch_state, move_instr direction, registration_state_t next_state, uint16_t max_registration_steps)
+static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int target_switch_state, move_instr_t direction, registration_state_t next_state, uint16_t max_registration_steps)
 {
     if (digitalRead(limit_switch_pin) == target_switch_state) {
         if (target_switch_state == LIMIT_SWITCH_DEPRESSED) {
@@ -81,7 +81,7 @@ static bool _register_axis(move_instr *movement, int limit_switch_pin, int targe
 /**
  * @returns true on successful iteration; false otherwise (if motors should be halted)
 */
-bool service_register_carriage(move_instr *movement)
+bool service_register_carriage(move_instr_t *movement)
 {
     *movement = 0;
 

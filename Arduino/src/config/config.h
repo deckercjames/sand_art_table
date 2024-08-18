@@ -38,6 +38,10 @@
 #define LED_STRIP_PIN 8
 #define LED_COUNT 176
 
+#define LED_BIGHTNESS_PIN (A0)
+#define LED_SPEED_PIN     (A1)
+#define LED_PATTERN_PIN   (A2)
+
 // Thermometer
 #define THERMO_I2C_ADDR (0x18) /* This is the default address*/
 #define THERMO_RESOLUTION (0)
@@ -56,7 +60,7 @@
 // Interboard commuication (movement instructions)
 #define SD_CARD_BOARD_I2C_ADDR 15
 
-#define INSTRUCTION_READY_PIN_OUT 13
+#define INSTRUCTION_READY_PIN_OUT 6
 #define INSTRUCTION_READY_PIN_IN 2
 #define INSTRUCTION_READY (HIGH)
 #define INSTRUCTION_NOT_READY (LOW)

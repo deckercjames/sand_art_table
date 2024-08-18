@@ -14,15 +14,22 @@ bool init_sd_card()
     return SD.begin(CARD_SELECT_PIN);
 }
 
-void open_next_file()
+bool open_next_file()
 {
     log_info("opening next file");
     current_file = SD.open("test.gcd");
-    if (current_file) {
-        log_info("File successfully opened");
-    } else {
+    if (!current_file) {
         log_info("File opened Failed");
+        return false;
     }
+    
+    log_info("File successfully opened");
+    return true;
+}
+
+void close_current_file()
+{
+    current_file.close();
 }
 
 void get_next_line(char *buf, unsigned int buf_size)
@@ -62,25 +69,7 @@ void get_next_line(char *buf, unsigned int buf_size)
 }
 
 
-
-// TESTING
-
-char *commands[] = {
-    "G01 X0 Y1000",
-    "G01 X1000 Y1000",
-    "G01 X1000 Y0"
-};
-
-int on_idx = 0;
-
-void get_test_line(char *buf, unsigned int buf_size)
+bool file_completed()
 {
-    int i = 0;
-    while (commands[on_idx][i] && i<buf_size) {
-        buf[i] = commands[on_idx][i];
-        i++;
-    }
-    on_idx++;
-    if (on_idx == 4) while(1);
-    // on_idx %= 3;
+    return !current_file.available();
 }

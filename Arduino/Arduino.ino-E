@@ -15,5 +15,5 @@ void setup() {
 }
 
 void loop() {
-  motor_board_loop();
+  sd_card_board_loop();
 }
