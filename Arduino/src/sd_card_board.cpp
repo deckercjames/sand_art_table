@@ -26,6 +26,7 @@ location_msg_t next_location;
 
 void wire_request_provide_next_pos()
 {
+    log_info("Received wire request for instruction");
     digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
     const char * buffer = (const char *) & next_location;
     Wire.write(buffer, sizeof(location_msg_t));
@@ -36,8 +37,8 @@ void wire_request_provide_next_pos()
 void sd_card_board_setup()
 {
     // Setup I2C to send instruction to motor board
-    Wire.begin(SD_CARD_BOARD_I2C_ADDR);
-    Wire.onRequest(wire_request_provide_next_pos);
+    // Wire.begin(SD_CARD_BOARD_I2C_ADDR);
+    // Wire.onRequest(wire_request_provide_next_pos);
     
     // Setup pin to indicate a new instruction is ready
     pinMode(INSTRUCTION_READY_PIN_OUT, OUTPUT);
@@ -61,6 +62,8 @@ void sd_card_board_loop()
     switch(sd_state)
     {
         case SD_STATE_OPEN_FILE:
+        {
+            log_debug("SD state OEPN_FILE");
             bool rc = open_next_file();
             if (!rc) {
                 sd_state = SD_STATE_HALT;
@@ -68,13 +71,18 @@ void sd_card_board_loop()
             }
             sd_state = SD_STATE_READ_INSTR;
             break;
+        }
         case SD_STATE_READ_INSTR:
         {
+            log_debug("SD state READ_INSTR");
             if (file_completed()) {
+                log_info("File read complete");
                 sd_state = SD_STATE_CLOSE_FILE;
             }
+            log_debug("Reading line...");
             char buf[128] = { 0 };
             get_next_line(buf, sizeof(buf));
+            log_debug_value("Read instruction", buf);
             location_msg_t parsed_location;
             parsed_location.x_location_steps = next_location.x_location_steps;
             parsed_location.y_location_steps = next_location.y_location_steps;
@@ -82,8 +90,11 @@ void sd_card_board_loop()
             // No change. read another instruction
             if ((parsed_location.x_location_steps == next_location.x_location_steps) &&
                 (parsed_location.y_location_steps == next_location.y_location_steps)) {
+                log_debug("Instruction does not change location");
                 break;
             }
+            log_debug("Pending send instruction");
+            digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_READY);
             sd_state = SD_STATE_SEND_INSTR_PENDING;
             break;
         }

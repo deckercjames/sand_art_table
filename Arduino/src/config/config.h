@@ -31,7 +31,7 @@
 #define MM_TO_STEPS(mills) ((mills) * 10)
 
 // SD Card
-#define CARD_SELECT_PIN 53
+#define CARD_SELECT_PIN 10
 #define LINE_BUFFER_SIZE 128
 
 // Lighting
@@ -58,7 +58,7 @@
 #define FANS_ON_THRESHOLD_F (85)
 
 // Interboard commuication (movement instructions)
-#define SD_CARD_BOARD_I2C_ADDR 15
+#define SD_CARD_BOARD_I2C_ADDR 14
 
 #define INSTRUCTION_READY_PIN_OUT 6
 #define INSTRUCTION_READY_PIN_IN 2

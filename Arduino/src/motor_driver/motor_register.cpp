@@ -134,7 +134,7 @@ bool service_register_carriage(move_instr_t *movement)
                 break;
             }
             registration_state = REGISTRATION_STATE_X_POS;
-            log_debug("Debounce delay complete. Reversing driection.");
+            log_debug("Debounce delay complete. Reversing direction.");
             break;
         case REGISTRATION_STATE_X_POS:
             return _register_axis(
@@ -148,6 +148,7 @@ bool service_register_carriage(move_instr_t *movement)
         case REGISTRATION_COMPLETE:
             log_info("Carriage registration complete.");
             registration_state = REGISTRATION_STATE_IDLE;
+            break;
         
         case REGISTRATION_STATE_HALT:
         default:

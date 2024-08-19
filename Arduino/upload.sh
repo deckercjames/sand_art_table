@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 FQBN="arduino:avr:nano"
-PORT="/dev/cu.usbserial-1410"
+PORT="/dev/cu.usbserial-$1"
+
+shift
 
 # Validate scripts args
 if [ $# -eq 0 ]; then
@@ -24,7 +26,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # CLOSE ANY OPEN SCREENS
-screen -X quit
+# screen -X quit
 
 # UPLOAD
 echo Uploading

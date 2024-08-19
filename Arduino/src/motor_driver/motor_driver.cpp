@@ -86,14 +86,17 @@ void service_motors()
         case MOTOR_STATE_REGISTER_CARRIAGE:
         {
             if (registration_complete()) {
-                motor_state = MOTOR_STATE_IDLE;
+                log_info("Motor regestration complete. Transitioning to INSTR_PENDING");
+                motor_state = MOTOR_STATE_INSTRUCTION_PENDING;
                 break;
             }
             
             move_instr_t movement;
             bool register_rc;
             register_rc = service_register_carriage(&movement);
+            
             if (!register_rc) {
+                log_error("Motor regestration failed");
                 release_motors();
                 motor_state = MOTOR_STATE_HALT;
                 break;
@@ -112,6 +115,10 @@ void service_motors()
             break;
         }
         case MOTOR_STATE_INSTRUCTION_PENDING:
+            if (!at_target()) {
+                motor_state = MOTOR_STATE_MOVING;
+            }
+            break;
         case MOTOR_STATE_HALT:
         case MOTOR_STATE_THERMO_THROTTLE:
             break;

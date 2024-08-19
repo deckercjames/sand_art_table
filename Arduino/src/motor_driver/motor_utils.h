@@ -16,7 +16,7 @@ typedef struct location_msg {
 #define CLOCKWISE (0x0)
 #define COUNTER_CLOCKWISE (0x8)
 
-#define NA 0
+#define MOVE_NONE 0
 
 #define ONE_STEP   (0x1)
 #define TWO_STEPS  (0x3)

@@ -16,10 +16,15 @@ bool init_sd_card()
 
 bool open_next_file()
 {
-    log_info("opening next file");
+    if (!SD.exists("test.gcd")) {
+        log_error("File does not exist");
+        return false;
+    }
+    log_debug("File exists");
+    log_debug("opening next file");
     current_file = SD.open("test.gcd");
     if (!current_file) {
-        log_info("File opened Failed");
+        log_error("File opened Failed");
         return false;
     }
     
@@ -29,6 +34,7 @@ bool open_next_file()
 
 void close_current_file()
 {
+    log_debug("Closing current file");
     current_file.close();
 }
 

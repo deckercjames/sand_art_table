@@ -69,7 +69,7 @@ const uint8_t movement_lookups[] = {
     MOVE_UP_LEFT,    // Y step =  1   [up left]
     // X step = 0
     MOVE_DOWN,       // Y step = -1   [down]
-    NA,              // No Move: N/A
+    MOVE_NONE,       // No Move: N/A
     MOVE_UP,         // Y step =  1   [up]
     // X step = 1
     MOVE_DOWN_RIGHT, // Y step = -1   [down right]
@@ -80,7 +80,7 @@ const uint8_t movement_lookups[] = {
 uint8_t get_motor_movement_instruction()
 {
     if (at_target()) {
-        return;
+        return MOVE_NONE;
     }
     
     int error_double = 2 * error;
@@ -90,7 +90,7 @@ uint8_t get_motor_movement_instruction()
     
     if (error_double >= delta_y) {
         if (current_pos_x == target_pos_x) {
-            return;
+            return MOVE_NONE;
         }
         error += delta_y;
         step_x = sign_delta_x;
@@ -98,7 +98,7 @@ uint8_t get_motor_movement_instruction()
     
     if (error_double <= delta_x) {
         if (current_pos_y == target_pos_y) {
-            return;
+            return MOVE_NONE;
         }
         error += delta_x;
         step_y = sign_delta_y;

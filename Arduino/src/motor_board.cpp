@@ -39,10 +39,15 @@ static void _get_next_position_from_wire(location_msg_t *location)
     
     int index = 0;
     
+    // log_debug("Requesting next position from wire");
+    
     location->x_location_steps = 0;
     location->y_location_steps = 0;
     
-    Wire.requestFrom(SD_CARD_BOARD_I2C_ADDR, 6);
+    log_debug("Requesting instruct after 5 sec");
+    delay(8000);
+        
+    Wire.requestFrom(SD_CARD_BOARD_I2C_ADDR, 4);
     
     while (Wire.available()) { // peripheral may send less than requested
         char c = Wire.read();
@@ -53,6 +58,13 @@ static void _get_next_position_from_wire(location_msg_t *location)
         received_buffer[index] = (uint8_t) c;
         index++;
     }
+    
+    // log_debug_value("Got next position from wire", location->x_location_steps);
+    Serial.print("Got instruction: ");
+    Serial.print(location->x_location_steps, DEC);
+    Serial.print(", ");
+    Serial.print(location->y_location_steps, DEC);
+    Serial.println(";");
 }
 
 void motor_board_loop()
@@ -60,11 +72,14 @@ void motor_board_loop()
     // Read next instruction if necesssary
     if (ready_for_next_instruction()) {
         if (!_next_instruction_ready()) {
+            log_debug("Next instruction not ready");
             return;
         }
         location_msg_t target_position;
         _get_next_position_from_wire(&target_position);
         set_target_pos_steps(target_position.x_location_steps, target_position.y_location_steps);
+    } else {
+        // log_debug("Not ready for next instruction");
     }
     
     service_motors();

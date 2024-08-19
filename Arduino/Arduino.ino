@@ -10,7 +10,7 @@
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("**************************************");
+  Serial.println("\n\n**************************************");
   motor_board_setup();
 }
 
