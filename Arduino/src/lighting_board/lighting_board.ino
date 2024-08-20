@@ -3,8 +3,8 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
-#include "config/config.h"
-#include "utils/logging.h"
+#include "config.h"
+#include "logging.h"
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 

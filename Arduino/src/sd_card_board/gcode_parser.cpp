@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "utils.h"
-#include "config/config.h"
+#include "config.h"
 
 enum gcode_parse_state  {
     GCODE_STATE_PENDING_CMD,

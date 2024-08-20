@@ -26,7 +26,7 @@
 
 #include "logging.h"
 #include "utils.h"
-#include "config/config.h"
+#include "config.h"
 
 File current_file;
 
@@ -132,10 +132,10 @@ void wire_request_provide_next_pos()
 }
 
 
-void setup() {
+void setup()
+{
+    LOG_INIT(9600);
   
-  Serial.begin(9600);
-  Serial.println("\n\n**************************************");
     // Setup I2C to send instruction to motor board
     Wire.begin(SD_CARD_BOARD_I2C_ADDR);
     Wire.onRequest(wire_request_provide_next_pos);
