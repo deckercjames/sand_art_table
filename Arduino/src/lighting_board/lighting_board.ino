@@ -1,26 +1,28 @@
 
-#include "led_strip.h"
 
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
-#include "../config/config.h"
+#include "config/config.h"
+#include "utils/logging.h"
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
 
-void init_led_strip()
+void setup()
 {
+    Serial.begin(9600);
     strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
     strip.show();            // Turn OFF all pixels ASAP
     strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+    log_info("Lighting initilized");
 }
 
 static void _duel_hue(unsigned int start_led, unsigned int start_hue, unsigned int hue_delta);
 
 
 
-void update_led_strip()
+void loop()
 {
     // Read Pot Values
     int brightness_val = analogRead(LED_BIGHTNESS_PIN);

@@ -7,11 +7,6 @@
 
 typedef uint8_t move_instr_t;
 
-typedef struct location_msg {
-    uint16_t x_location_steps;
-    uint16_t y_location_steps;
-} __attribute__((__packed__)) location_msg_t;
-
 
 #define CLOCKWISE (0x0)
 #define COUNTER_CLOCKWISE (0x8)

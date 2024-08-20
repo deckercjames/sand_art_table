@@ -2,25 +2,23 @@
 
 FQBN="arduino:avr:nano"
 
-# ./run_unit_tests.sh
 
 # COMPILE
 
 function compile_board()
 {
-    sed -i'' -E "s/.*_setup/  ${1}_setup/g" Arduino.ino
-    sed -i'' -E "s/.*_loop/  ${1}_loop/g" Arduino.ino
-    if arduino-cli compile --clean -b "$FQBN" --output-dir ./bin/; then
+    cd "src/$1"
+    if arduino-cli compile --clean -b "$FQBN" --output-dir ../../bin/; then
         echo "Compilation succeeded for ${1}"
     else
         echo "Compilation failed for ${1}"
         exit 1
     fi
-    rm -f ./bin/Arduino.ino.eep
-    rm -f ./bin/Arduino.ino.elf
-    rm -f ./bin/Arduino.ino.with_bootloader.bin
-    rm -f ./bin/Arduino.ino.with_bootloader.hex
-    mv ./bin/Arduino.ino.hex "./bin/${1}.ino.hex"
+    cd ../..
+    rm -f ./bin/${1}.ino.eep
+    rm -f ./bin/${1}.ino.elf
+    rm -f ./bin/${1}.ino.with_bootloader.bin
+    rm -f ./bin/${1}.ino.with_bootloader.hex
     return 0
 }
 

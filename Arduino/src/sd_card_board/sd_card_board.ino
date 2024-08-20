@@ -23,55 +23,11 @@
 
 #include <Wire.h>
 
+#include "utils/logging.h"
+#include "utils/utils.h"
+#include "config/config.h"
+
 File current_file;
-
-#define MM_TO_STEPS(mills) ((mills) * 10)
-
-typedef struct location_msg {
-    uint16_t x_location_steps;
-    uint16_t y_location_steps;
-} __attribute__((__packed__)) location_msg_t;
-
-typedef enum logging_level {
-    LOG_LEVEL_FATAL = 0,
-    LOG_LEVEL_ERROR,
-    LOG_LEVEL_INFO,
-    LOG_LEVEL_DEBUG,
-} logging_level_t;
-
-logging_level_t current_level = LOG_LEVEL_DEBUG;
-
-#define log_fatal(msg) \
-    if (current_level >= LOG_LEVEL_FATAL) { \
-        Serial.print(F("[FATAL] ")); \
-        Serial.println(F(msg)); \
-    }
-
-#define log_error(msg) \
-    if (current_level >= LOG_LEVEL_ERROR) { \
-        Serial.print(F("[ERROR] ")); \
-        Serial.println(F(msg)); \
-    }
-
-#define log_info(msg) \
-    if (current_level >= LOG_LEVEL_INFO) { \
-        Serial.print(F("[INFO]  ")); \
-        Serial.println(F(msg)); \
-    }
-
-#define log_debug(msg) \
-    if (current_level >= LOG_LEVEL_DEBUG) { \
-        Serial.print(F("[DEBUG] ")); \
-        Serial.println(F(msg)); \
-    }
-
-#define log_debug_value(msg, value) \
-    if (current_level >= LOG_LEVEL_DEBUG) { \
-        Serial.print(F("[DEBUG] ")); \
-        Serial.print(F(msg)); \
-        Serial.print(F(": ")); \
-        Serial.println(value); \
-    }
 
 typedef enum {
     SD_STATE_IDLE,
@@ -88,15 +44,6 @@ volatile sd_state_t sd_state;
 location_msg_t next_location;
 
 #define HALT do {} while(1)
-
-#define CARD_SELECT_PIN 10
-// Interboard commuication (movement instructions)
-#define SD_CARD_BOARD_I2C_ADDR 14
-
-#define INSTRUCTION_READY_PIN_OUT 6
-#define INSTRUCTION_READY_PIN_IN 2
-#define INSTRUCTION_READY (HIGH)
-#define INSTRUCTION_NOT_READY (LOW)
 
 bool init_sd_card()
 {
@@ -238,7 +185,7 @@ void get_next_line(char *buf, unsigned int buf_size)
     int val;
     
     if (!current_file) {
-        // log_debug("no current file");
+        log_debug("no current file");
         buf[0] = 0;
         return;
     }
