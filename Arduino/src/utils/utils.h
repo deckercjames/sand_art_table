@@ -2,6 +2,8 @@
 #ifndef UTILS_H__
 #define UTILS_H__
 
+#include <stdint.h>
+
 #define SECS_TO_MILLIS (1000)
 
 #define MM_TO_STEPS(millis) (millis * STEPS_PER_MM)

@@ -5,16 +5,17 @@ FQBN="arduino:avr:nano"
 
 # COMPILE
 
+BUILD_PROPERTIY=""
+BUILD_PROPERTIY="build.extra_flags=\"-DRELEASE=1\""
+
 function compile_board()
 {
-    cd "src/$1"
-    if arduino-cli compile --clean -b "$FQBN" --output-dir ../../bin/; then
+    if arduino-cli compile --clean --build-property build.extra_flags=\"-Isrc/utils/\" --fqbn "$FQBN" --output-dir bin/ "src/${1}"; then
         echo "Compilation succeeded for ${1}"
     else
         echo "Compilation failed for ${1}"
         exit 1
     fi
-    cd ../..
     rm -f ./bin/${1}.ino.eep
     rm -f ./bin/${1}.ino.elf
     rm -f ./bin/${1}.ino.with_bootloader.bin
