@@ -10,7 +10,7 @@ RELEASE_BUILD=""
 
 function compile_board()
 {
-    if arduino-cli compile --clean --build-property "build.extra_flags=-Iconfig/ -Isrc/utils/ ${RELEASE_BUILD}" --fqbn "$FQBN" --output-dir bin/ "src/${1}"; then
+    if arduino-cli compile --clean --build-property "build.extra_flags=-Iconfig/ -Iutils/ ${RELEASE_BUILD}" --fqbn "$FQBN" --output-dir bin/ "src/${1}"; then
         echo "Compilation succeeded for ${1}"
     else
         echo "Compilation failed for ${1}"

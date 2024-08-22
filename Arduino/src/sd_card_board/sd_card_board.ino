@@ -22,7 +22,7 @@
 #include <SD.h>
 #include <Wire.h>
 
-#include "gcode_parser.h"
+#include "src/gcode_parser.h"
 
 #include "logging.h"
 #include "utils.h"
