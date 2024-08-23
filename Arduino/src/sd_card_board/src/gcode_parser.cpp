@@ -17,13 +17,29 @@ enum gcode_parse_state  {
     GCODE_STATE_SKIP_ARG,
 };
 
+static void process_pending_arg(char *arg_buf, int arg_buf_idx, char *current_arg_id, location_msg_t *new_target)
+{
+    if (*current_arg_id == '\0') {
+        return;
+    }
+    arg_buf[arg_buf_idx] = '\0';
+    float mm = atof(arg_buf);
+    mm = max(mm, 0.0f);
+    if (*current_arg_id == 'X') {
+        new_target->x_location_steps = (unsigned int) MM_TO_STEPS(mm);
+    } else if (*current_arg_id == 'Y') {
+        new_target->y_location_steps = (unsigned int) MM_TO_STEPS(mm);
+    }
+    *current_arg_id = '\0';
+}
+
 void parse_gcode_line(const char *instr_buf, location_msg_t *new_target)
 {
     int idx = 0;
     char c;
     char current_arg_id; // The arg that is currently being parsed. Either 'X' or 'Y'
     char current_arg_val[10];
-    int current_arg_val_idx;
+    int current_arg_val_idx = 0;
 
     enum gcode_parse_state state = GCODE_STATE_PENDING_CMD;
     
@@ -31,6 +47,7 @@ void parse_gcode_line(const char *instr_buf, location_msg_t *new_target)
     {
         c = instr_buf[idx];
         if (c == ';') {
+            process_pending_arg(current_arg_val, current_arg_val_idx, &current_arg_id, new_target);
             break;
         }
         
@@ -85,14 +102,7 @@ void parse_gcode_line(const char *instr_buf, location_msg_t *new_target)
                 break;
             case GCODE_STATE_PROCESS_ARG:
             {
-                current_arg_val[current_arg_val_idx] = '\0';
-                float mm = atof(current_arg_val);
-                mm = max(mm, 0.0f);
-                if (current_arg_id == 'X') {
-                    new_target->x_location_steps = (unsigned int) MM_TO_STEPS(mm);
-                } else if (current_arg_id == 'Y') {
-                    new_target->y_location_steps = (unsigned int) MM_TO_STEPS(mm);
-                }
+                process_pending_arg(current_arg_val, current_arg_val_idx, &current_arg_id, new_target);
                 state = GCODE_STATE_PENDING_ARG;
                 break;
             }
