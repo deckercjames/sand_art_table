@@ -28,10 +28,9 @@ const uint8_t button_list[] = {
 
 void init_button_group()
 {
-    pinMode(INPUT_BUTTON_1_PIN, INPUT_PULLUP);
-    pinMode(INPUT_BUTTON_2_PIN, INPUT_PULLUP);
-    pinMode(INPUT_BUTTON_3_PIN, INPUT_PULLUP);
-    pinMode(INPUT_BUTTON_4_PIN, INPUT_PULLUP);
+    for (int i = 0; i < sizeof(button_list); i++) {
+        pinMode(button_list[i], INPUT_PULLUP);
+    }
     
     button_group_state = BUTTON_GROUP_STATE_IDLE;
 }

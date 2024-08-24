@@ -18,17 +18,16 @@ File current_file;
 
 typedef enum {
     SD_STATE_IDLE,
-    SD_STATE_OPEN_FILE,
-    SD_STATE_READ_INSTR,
+    SD_STATE_LOAD_NEXT_INSTR,
     SD_STATE_SEND_INSTR_PENDING,
-    SD_STATE_INSTR_SENT,
     SD_STATE_CLOSE_FILE,
-    SD_STATE_HALT,
+    SD_STATE_
 } sd_state_t;
 
 volatile sd_state_t sd_state;
+unsigned int state_start_time_millis;
 
-location_msg_t next_location;
+volatile location_msg_t next_location;
 
 #define HALT do {} while(1)
 
@@ -37,13 +36,12 @@ void wire_request_provide_next_pos()
     log_info("Received wire request for instruction");
     digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
     const char * buffer = (const char *) & next_location;
-    Serial.print("Sending instruction: ");
-    Serial.print(next_location.x_location_steps, DEC);
-    Serial.print(", ");
-    Serial.print(next_location.y_location_steps, DEC);
-    Serial.println(";");
+    log_debug_value("Sending Position [x]", next_location.x_location_steps);
+    log_debug_value("Sending Position [y]", next_location.y_location_steps);
     Wire.write(buffer, sizeof(location_msg_t));
-    sd_state = SD_STATE_INSTR_SENT;
+    if (sd_state == SD_STATE_SEND_INSTR_PENDING) {
+        sd_state = SD_STATE_LOAD_NEXT_INSTR;
+    }
 }
 
 
@@ -55,10 +53,11 @@ void setup()
     pinMode(INSTRUCTION_READY_PIN_OUT, OUTPUT);
     digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
 
-    // Setup I2C to send instruction to motor board
-    Wire.begin(SD_CARD_BOARD_I2C_ADDR);
-    Wire.onRequest(wire_request_provide_next_pos);
+    // Clear next instruction
+    memset(&next_location, 0, sizeof(location_msg_t));
     
+    sd_state = SD_STATE_IDLE;
+
     // Setup SD card
     if (!init_sd_card()) {
         log_fatal("Could not init sd card");
@@ -69,32 +68,27 @@ void setup()
     // Init buttons
     init_button_group();
     
-    // Clear next instruction
-    memset(&next_location, 0, sizeof(location_msg_t));
-    
-    sd_state = SD_STATE_OPEN_FILE;
+    // Setup I2C last so we can not receive premature requests
+    Wire.begin(SD_CARD_BOARD_I2C_ADDR);
+    Wire.onRequest(wire_request_provide_next_pos);
 }
 
 void loop()
 {
-    check_button_pressed();
+    int button_pressed = check_button_pressed();
+    
+    if (button_pressed) {
+        close_current_file();
+        open_file_idx(button_pressed);
+        sd_state = SD_STATE_LOAD_NEXT_INSTR;
+    }
   
     switch(sd_state)
     {
-        case SD_STATE_OPEN_FILE:
-        {
-            log_debug("SD state OEPN_FILE");
-            bool rc = open_next_file();
-            if (!rc) {
-                sd_state = SD_STATE_HALT;
-                break;
-            }
-            sd_state = SD_STATE_READ_INSTR;
+        case SD_STATE_IDLE:
             break;
-        }
-        case SD_STATE_READ_INSTR:
+        case SD_STATE_LOAD_NEXT_INSTR:
         {
-            log_debug("SD state READ_INSTR");
             if (file_completed()) {
                 log_info("File read complete");
                 sd_state = SD_STATE_CLOSE_FILE;
@@ -107,7 +101,7 @@ void loop()
             old_location.x_location_steps = next_location.x_location_steps;
             old_location.y_location_steps = next_location.y_location_steps;
             parse_gcode_line(buf, &next_location);
-            // No change. read another instruction
+            // No change. read another instruction next frame
             if ((old_location.x_location_steps == next_location.x_location_steps) &&
                 (old_location.y_location_steps == next_location.y_location_steps)) {
                 log_debug("Instruction does not change location");
@@ -120,14 +114,9 @@ void loop()
         }
         case SD_STATE_SEND_INSTR_PENDING:
             break;
-        case SD_STATE_INSTR_SENT:
-            sd_state = SD_STATE_READ_INSTR;
-            break;
-        case SD_STATE_HALT:
-            break;
         case SD_STATE_CLOSE_FILE:
             close_current_file();
-            sd_state = SD_STATE_OPEN_FILE;
+            sd_state = SD_STATE_IDLE;
             break;
         
     }
