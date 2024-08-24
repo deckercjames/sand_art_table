@@ -13,4 +13,7 @@
 // Strip Properties
 #define LED_COUNT 176
 
+// MISC
+#define SPEED_MODIFIER 0.3f
+
 #endif // LIGHTING_CONFIG_H__

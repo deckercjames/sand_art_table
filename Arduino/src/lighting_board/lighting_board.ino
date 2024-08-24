@@ -2,24 +2,46 @@
 
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
+#include <stdint.h>
 
 #include "config.h"
 #include "logging.h"
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
+#define DUEL_HUE_DELTA 13553
+
+float cos_table[LED_COUNT];
+
+int current_patern_idx;
 
 void setup()
 {
     LOG_INIT(SERIAL_BAUD);
+    
     strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
     strip.show();            // Turn OFF all pixels ASAP
-    strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+
+    current_patern_idx = 0;
+
+    for (int i = 0; i < LED_COUNT; i++) {
+        cos_table[i] = 0.5f - (cos(((float) i / (LED_COUNT - 1)) * PI) * 0.5f);
+    }
+
     log_info("Lighting initilized");
 }
 
-static void _duel_hue(unsigned int start_led, unsigned int start_hue, unsigned int hue_delta);
+static void _duel_hue(float pattern_val);
 
+typedef struct strip_pattern {
+    int upper_range;
+    uint16_t (*fnc_ptr)(int normalized_led_idx, float intra_pattern_val);
+} strip_pattern_t;
+
+const strip_pattern_t pattern_table[] = {
+    {1024, _duel_hue},
+    {0, NULL} // Terminator
+};
 
 
 void loop()
@@ -32,29 +54,39 @@ void loop()
     // Set brightness
     strip.setBrightness(brightness_val >> 2);
     
-    unsigned long m = millis();
-
-    int anchor_led_idk = (m * LED_COUNT / speed_val);
+    // Set anchor LED
+    int anchor_led = ((int) ((millis() * SPEED_MODIFIER)/ speed_val)) % LED_COUNT;
     
-    anchor_led_idk /= 3;
+    float intra_pattern_val = 0.0f;
+    
+    // Select Pattern
+    for (int i = 0; pattern_table[i].upper_range; i++) {
+        int lower_bound = (i == 0) ? 0 : pattern_table[i-1].upper_range + POT_HYSTERESIS;
+        int upper_bound = (i == 1024) ? 1024 : pattern_table[i].upper_range - POT_HYSTERESIS;
+        if (pattern_val >= lower_bound && pattern_val <= upper_bound) {
+            current_patern_idx = i;
+            intra_pattern_val = ((float) pattern_val - lower_bound) / (upper_bound - lower_bound);
+            break;
+        }
+    }
+    
     
     unsigned int start_hue = pattern_val << 6;
     
-    _duel_hue(anchor_led_idk, start_hue, 13553);
+    for (int i = 0; i <= LED_COUNT; i++) {
+        uint16_t pixel_hue = pattern_table[current_patern_idx].fnc_ptr(i, intra_pattern_val);
+        uint32_t color = strip.gamma32(strip.ColorHSV(pixel_hue));
+        int led_idx = (i + anchor_led) % LED_COUNT;
+        strip.setPixelColor(led_idx, color);
+    }
     
     strip.show();
 }
 
 
-static void _duel_hue(unsigned int start_led, unsigned int start_hue, unsigned int hue_delta)
+static uint16_t _duel_hue(int normalized_led_idx, float intra_pattern_val)
 {
-    for (int i = 0; i <= (LED_COUNT / 2); i++)
-    {
-        int hue = (int) (start_hue + ((float) i * 2 / LED_COUNT) * hue_delta);
-        uint32_t color = strip.gamma32(strip.ColorHSV(hue));
-        int led_idx_0 = (i + start_led) % LED_COUNT;
-        int led_idx_1 = (LED_COUNT - i + start_led) % LED_COUNT;
-        strip.setPixelColor(led_idx_0, color);
-        strip.setPixelColor(led_idx_1, color);
-    }
+    uint16_t start_hue = (uint16_t) (0xFFFF * intra_pattern_val);
+    uint16_t hue_delta = (uint16_t) (DUEL_HUE_DELTA * cos_table[normalized_led_idx]);
+    return start_hue + hue_delta;
 }

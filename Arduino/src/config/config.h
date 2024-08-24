@@ -11,6 +11,7 @@
 
 // Physical Input
 #define DEBOUNCE_TIME_MILLIS 10
+#define POT_HYSTERESIS 5
 
 // Sand Table Size
 #define TABLE_DIM_X_MM 900

@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 
+#define PI 3.14159265f
+
 #define SECS_TO_MILLIS (1000)
 
 #define MM_TO_STEPS(millis) (millis * STEPS_PER_MM)
