@@ -6,6 +6,12 @@
 #include "motor_config.h"
 #include "sd_card_config.h"
 
+// Serial
+#define SERIAL_BAUD 9600
+
+// Pysical Input
+#define DEBOUNCE_TIME_MILLIS 10
+
 // Sand Table Size
 #define TABLE_DIM_X_MM 900
 #define TABLE_DIM_Y_MM 550

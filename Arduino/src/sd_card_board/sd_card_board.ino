@@ -23,6 +23,7 @@
 #include <Wire.h>
 
 #include "src/gcode_parser.h"
+#include "src/button_group.h"
 
 #include "logging.h"
 #include "utils.h"
@@ -134,15 +135,16 @@ void wire_request_provide_next_pos()
 
 void setup()
 {
-    LOG_INIT(9600);
+    LOG_INIT(SERIAL_BAUD);
   
+    // Setup pin to indicate a new instruction is ready
+    pinMode(INSTRUCTION_READY_PIN_OUT, OUTPUT);
+    digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
+
     // Setup I2C to send instruction to motor board
     Wire.begin(SD_CARD_BOARD_I2C_ADDR);
     Wire.onRequest(wire_request_provide_next_pos);
     
-    // Setup pin to indicate a new instruction is ready
-    pinMode(INSTRUCTION_READY_PIN_OUT, OUTPUT);
-
     // Setup SD card
     if (!init_sd_card()) {
         log_fatal("Could not init sd card");
@@ -150,13 +152,18 @@ void setup()
     }
     log_info("SD Card Initilized");
     
+    // Init buttons
+    init_button_group();
+    
     // Clear next instruction
     memset(&next_location, 0, sizeof(location_msg_t));
     
     sd_state = SD_STATE_OPEN_FILE;
 }
 
-void loop() {
+void loop()
+{
+    check_button_pressed();
   
     switch(sd_state)
     {

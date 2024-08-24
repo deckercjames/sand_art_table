@@ -4,7 +4,8 @@ UTEST_CC := g++
 ARDUINO_FLAGS  := --clean
 FQBN := arduino:avr:nano
 BUILD_DIR := bin
-RELEASE_BUILD := "-DRELEASE"
+# RELEASE_BUILD := "-DRELEASE"
+RELEASE_BUILD := ""
 CONFIG_SRC := $(shell find ./src/config -type f)
 UTIL_SRC := $(shell find ./src/utils -type f)
 

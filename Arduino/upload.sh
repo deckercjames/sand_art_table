@@ -15,18 +15,9 @@ if [ "$1" != "lighting" ] && [ "$1" != "sd_card" ] && [ "$1" != "motor" ]; then
     exit 1
 fi
 
-# Verify
-
-mkdir -p bin/
-
-./verify.sh "$1"
-if [ $? -ne 0 ]; then
-    echo "Compile Failed"
-    exit 1
-fi
-
 # CLOSE ANY OPEN SCREENS
 # screen -X quit
+pkill SCREEN
 
 # UPLOAD
 echo Uploading
