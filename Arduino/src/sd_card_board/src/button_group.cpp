@@ -19,6 +19,13 @@ unsigned long state_start_time_millis;
 
 #define TIME_IN_STATE_MILLIS(start_time) (millis() - start_time)
 
+const uint8_t button_list[] = {
+    INPUT_BUTTON_1_PIN,
+    INPUT_BUTTON_2_PIN,
+    INPUT_BUTTON_3_PIN,
+    INPUT_BUTTON_4_PIN,
+};
+
 void init_button_group()
 {
     pinMode(INPUT_BUTTON_1_PIN, INPUT_PULLUP);
@@ -29,7 +36,6 @@ void init_button_group()
     button_group_state = BUTTON_GROUP_STATE_IDLE;
 }
 
-
 int check_button_pressed()
 {
     switch (button_group_state)
@@ -37,23 +43,15 @@ int check_button_pressed()
         case BUTTON_GROUP_STATE_IDLE:
         {
             int pressed_button = 0;
-            if (digitalRead(INPUT_BUTTON_1_PIN) == LOW) {
-                pressed_button = 1;
-            }
-            if (digitalRead(INPUT_BUTTON_2_PIN) == LOW) {
-                pressed_button = 2;
-            }
-            if (digitalRead(INPUT_BUTTON_3_PIN) == LOW) {
-                pressed_button = 3;
-            }
-            if (digitalRead(INPUT_BUTTON_4_PIN) == LOW) {
-                pressed_button = 4;
-            }
-            // log_debug_value("Checking", pressed_button);
-            if (pressed_button) {
+            for (int i = 0; i < sizeof(button_list); i++) {
+                if (digitalRead(button_list[i])) {
+                    continue;
+                }
+                int pressed_button = i + 1;
                 log_debug_value("Button pressed", pressed_button);
                 button_group_state = BUTTON_GROUP_STATE_DEBOUNCE_PRESSED;
                 state_start_time_millis = millis();
+                break;
             }
             return pressed_button;
         }
@@ -65,8 +63,10 @@ int check_button_pressed()
             return 0;
         case BUTTON_GROUP_STATE_WAIT_RELEASE:
         {
-            if (!digitalRead(INPUT_BUTTON_1_PIN) ||!digitalRead(INPUT_BUTTON_2_PIN) || !digitalRead(INPUT_BUTTON_3_PIN) || !digitalRead(INPUT_BUTTON_4_PIN)) {
-                return 0;
+            for (int i = 0; i < sizeof(button_list); i++) {
+                if (digitalRead(button_list[i]) == LOW) {
+                    return 0;
+                }
             }
             log_debug("All buttons released");
             button_group_state = BUTTON_GROUP_STATE_DEBOUNCE_RELEASE;
