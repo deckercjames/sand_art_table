@@ -202,6 +202,30 @@ bool test_gcode_ginstruction_only()
     return true;
 }
 
+bool test_gcode_g_only()
+{
+    gcode_instruction_t result = { 
+        .x_location_100um = 100,
+        .y_location_100um = 200,
+    };
+    parse_gcode_line("G", &result);
+    ASSERT_INT_EQUALS(100, result.x_location_100um);
+    ASSERT_INT_EQUALS(200, result.y_location_100um);
+    return true;
+}
+
+bool test_gcode_g0_only()
+{
+    gcode_instruction_t result = { 
+        .x_location_100um = 100,
+        .y_location_100um = 200,
+    };
+    parse_gcode_line("G0", &result);
+    ASSERT_INT_EQUALS(100, result.x_location_100um);
+    ASSERT_INT_EQUALS(200, result.y_location_100um);
+    return true;
+}
+
 bool test_gcode_invalid()
 {
     gcode_instruction_t result = { 
@@ -352,6 +376,8 @@ unit_test_t test_list[] = {
     TEST_CASE(test_gcode_all_comment),
     TEST_CASE(test_gcode_empty_line),
     TEST_CASE(test_gcode_ginstruction_only),
+    TEST_CASE(test_gcode_g_only),
+    TEST_CASE(test_gcode_g0_only),
     TEST_CASE(test_gcode_invalid),
     TEST_CASE(test_gcode_non_g1_command),
     TEST_CASE(test_gcode_extra_arg),
