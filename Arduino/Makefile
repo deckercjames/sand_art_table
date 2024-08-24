@@ -33,7 +33,7 @@ $(BUILD_DIR)/sd_card_board.ino.hex: $(CONFIG_SRC) $(UTIL_SRC) $(shell find ./src
 	
 	
 # Unit tests
-$(BUILD_DIR)/test_gcode_parser: test/unit_test_utils.h test/test_gcode_parser.cpp $(wildcard src/sd_card_board/src/test_gcode_parser.*)
+$(BUILD_DIR)/test_gcode_parser: test/unit_test_utils.h test/test_gcode_parser.cpp $(wildcard src/sd_card_board/src/gcode_parser.*)
 	$(UTEST_CC) -o $(BUILD_DIR)/test_gcode_parser -Isrc/sd_card_board/src/ -Isrc/config -Isrc/utils test/test_gcode_parser.cpp src/sd_card_board/src/gcode_parser.cpp
 
 clean: 

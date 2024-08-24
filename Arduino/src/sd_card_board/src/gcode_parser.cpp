@@ -17,7 +17,7 @@ enum gcode_parse_state  {
     GCODE_STATE_SKIP_ARG,
 };
 
-static void process_pending_arg(char *arg_buf, int arg_buf_idx, char *current_arg_id, location_msg_t *new_target)
+static void process_pending_arg(char *arg_buf, int arg_buf_idx, char *current_arg_id, gcode_instruction_t *new_target)
 {
     if (*current_arg_id == '\0') {
         return;
@@ -25,15 +25,16 @@ static void process_pending_arg(char *arg_buf, int arg_buf_idx, char *current_ar
     arg_buf[arg_buf_idx] = '\0';
     float mm = atof(arg_buf);
     mm = max(mm, 0.0f);
+    unsigned int val_100um = (unsigned int) (mm * 10);
     if (*current_arg_id == 'X') {
-        new_target->x_location_steps = (unsigned int) MM_TO_STEPS(mm);
+        new_target->x_location_100um = val_100um;
     } else if (*current_arg_id == 'Y') {
-        new_target->y_location_steps = (unsigned int) MM_TO_STEPS(mm);
+        new_target->y_location_100um = val_100um;
     }
     *current_arg_id = '\0';
 }
 
-void parse_gcode_line(const char *instr_buf, location_msg_t *new_target)
+void parse_gcode_line(const char *instr_buf, gcode_instruction_t *new_target)
 {
     int idx = 0;
     char c;

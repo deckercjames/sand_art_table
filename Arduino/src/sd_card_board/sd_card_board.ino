@@ -27,7 +27,7 @@ typedef enum {
 volatile sd_state_t sd_state;
 unsigned int state_start_time_millis;
 
-volatile location_msg_t next_location;
+volatile gcode_instruction_t next_location;
 
 #define HALT do {} while(1)
 
@@ -35,10 +35,13 @@ void wire_request_provide_next_pos()
 {
     log_info("Received wire request for instruction");
     digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
-    const char * buffer = (const char *) & next_location;
-    log_debug_value("Sending Position [x]", next_location.x_location_steps);
-    log_debug_value("Sending Position [y]", next_location.y_location_steps);
-    Wire.write(buffer, sizeof(location_msg_t));
+    log_debug_value("Sending Position [x 100um]", next_location.x_location_100um);
+    log_debug_value("Sending Position [y 100um]", next_location.y_location_100um);
+    location_msg_t outgoing_msg = {
+        .x_location_steps = next_location.x_location_100um / UM_PER_STEP,
+        .y_location_steps = next_location.y_location_100um / UM_PER_STEP,
+    };
+    Wire.write((const char *) &outgoing_msg, sizeof(location_msg_t));
     if (sd_state == SD_STATE_SEND_INSTR_PENDING) {
         sd_state = SD_STATE_LOAD_NEXT_INSTR;
     }
@@ -97,13 +100,14 @@ void loop()
             char buf[128] = { 0 };
             get_next_line(buf, sizeof(buf));
             log_debug_value("Read instruction", buf);
-            location_msg_t old_location;
-            old_location.x_location_steps = next_location.x_location_steps;
-            old_location.y_location_steps = next_location.y_location_steps;
+            gcode_instruction_t old_location = {
+                .x_location_100um = next_location.x_location_100um,
+                .y_location_100um = next_location.y_location_100um,
+            };
             parse_gcode_line(buf, &next_location);
             // No change. read another instruction next frame
-            if ((old_location.x_location_steps == next_location.x_location_steps) &&
-                (old_location.y_location_steps == next_location.y_location_steps)) {
+            if ((old_location.x_location_100um == next_location.x_location_100um) &&
+                (old_location.y_location_100um == next_location.y_location_100um)) {
                 log_debug("Instruction does not change location");
                 break;
             }
