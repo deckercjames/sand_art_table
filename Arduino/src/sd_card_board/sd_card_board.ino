@@ -14,8 +14,6 @@
 #include "utils.h"
 #include "config.h"
 
-File current_file;
-
 typedef enum {
     SD_STATE_IDLE,
     SD_STATE_LOAD_NEXT_INSTR,
@@ -78,14 +76,17 @@ void setup()
 
 void loop()
 {
+    // delay(1000);
     int button_pressed = check_button_pressed();
+    // log_debug_value("main: button val", button_pressed);
     
     if (button_pressed) {
+        log_info("main: button pressed");
         close_current_file();
         open_file_idx(button_pressed);
         sd_state = SD_STATE_LOAD_NEXT_INSTR;
     }
-  
+    
     switch(sd_state)
     {
         case SD_STATE_IDLE:
@@ -122,7 +123,6 @@ void loop()
             close_current_file();
             sd_state = SD_STATE_IDLE;
             break;
-        
     }
 }
 
