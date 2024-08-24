@@ -2,8 +2,9 @@
 #include "motor_register.h"
 
 #include "motor_utils.h"
-#include "../config/config.h"
-#include "../utils/logging.h"
+#include "config.h"
+#include "logging.h"
+#include "utils.h"
 
 #define LIMIT_SWITCH_DEPRESSED (HIGH)
 #define LIMIT_SWITCH_RELEASED (LOW)

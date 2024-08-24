@@ -9,7 +9,7 @@
 // Serial
 #define SERIAL_BAUD 9600
 
-// Pysical Input
+// Physical Input
 #define DEBOUNCE_TIME_MILLIS 10
 
 // Sand Table Size
@@ -20,7 +20,6 @@
 #define SAND_BOX_OFFSET_Y_MM 16
 
 #define STEPS_PER_MM 5
-#define UM_PER_STEP (10 / STEPS_PER_MM)
 
 // Interboard commuication (movement instructions)
 #define SD_CARD_BOARD_I2C_ADDR 14

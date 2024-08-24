@@ -7,6 +7,7 @@
 #define SECS_TO_MILLIS (1000)
 
 #define MM_TO_STEPS(millis) (millis * STEPS_PER_MM)
+#define UM_PER_STEP (10 / STEPS_PER_MM)
 
 #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \

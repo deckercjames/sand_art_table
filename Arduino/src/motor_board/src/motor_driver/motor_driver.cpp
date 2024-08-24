@@ -5,9 +5,9 @@
 
 #include "motor_utils.h"
 #include "motor_register.h"
-#include "path_calculator/path_calculator.h"
-#include "../config/config.h"
-#include "../utils/logging.h"
+#include "path_calculator.h"
+#include "config.h"
+#include "logging.h"
 
 #define MOTOR_DISABLED (HIGH)
 #define MOTOR_ENABLED (LOW)
@@ -107,25 +107,28 @@ void service_motors()
         }
         case MOTOR_STATE_MOVING:
         {
-            move_instr_t move = get_motor_movement_instruction();
-            _make_movement(move);
             if (at_target()) {
-                motor_state = MOTOR_STATE_INSTRUCTION_PENDING;
+                break;
             }
+            move_instr_t move = path_calculator_get_motor_movement_instruction();
+            _make_movement(move);
             break;
         }
-        case MOTOR_STATE_INSTRUCTION_PENDING:
-            if (!at_target()) {
-                motor_state = MOTOR_STATE_MOVING;
-            }
-            break;
         case MOTOR_STATE_HALT:
         case MOTOR_STATE_THERMO_THROTTLE:
             break;
     }
 }
 
-bool ready_for_next_instruction()
+void set_target_pos_steps(const location_msg_t *target_location)
 {
-    return (motor_state == MOTOR_STATE_INSTRUCTION_PENDING);
+    path_calculator_set_target_pos_steps(
+        max(target_location->x_location_steps, MM_TO_STEPS(TABLE_DIM_X_MM)),
+        max(target_location->y_location_steps, MM_TO_STEPS(TABLE_DIM_Y_MM))
+    );
+}
+
+bool at_target()
+{
+    return path_calculator_at_target();
 }

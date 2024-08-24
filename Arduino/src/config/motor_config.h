@@ -21,7 +21,6 @@
 
 // Temperature
 #define MOTOR_OPERATING_TEMP_F 95
-#define MOTOR_TURN_ON_TEMP_F 80
 
 // Communication Input Pin
 #define INSTRUCTION_READY_PIN_IN 2
@@ -30,5 +29,9 @@
 #define FANS_PIN 5
 #define FANS_OFF_THRESHOLD_F 72
 #define FANS_ON_THRESHOLD_F 85
+
+// Thermometer
+#define THERMOMETER_ANALOG_IN_PIN A1
+#define THERMOMETER_POWER_MILLIVOLTS 5000
 
 #endif //MOTOR_CONFIG_H__

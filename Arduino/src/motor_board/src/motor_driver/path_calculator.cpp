@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../config/config.h"
-#include "../motor_utils.h"
+#include "config.h"
+#include "motor_utils.h"
 
 // Redefine the stepper motor directions for implementation
 // Don't include the arduino header so we can unit test easier
@@ -30,7 +30,7 @@ int sign_delta_y;
 
 int error;
 
-void set_target_pos_steps(uint16_t target_x, uint16_t target_y)
+void path_calculator_set_target_pos_steps(uint16_t target_x, uint16_t target_y)
 {
     target_pos_x = min(target_x, TABLE_SIZE_X_STEPS);
     target_pos_y = min(target_y, TABLE_SIZE_Y_STEPS);
@@ -57,7 +57,7 @@ void set_target_pos_steps(uint16_t target_x, uint16_t target_y)
     error = delta_x + delta_y;
 }
 
-bool at_target()
+bool path_calculator_at_target()
 {
     return (current_pos_x == target_pos_x) && (current_pos_y == target_pos_y);
 }
@@ -77,9 +77,9 @@ const uint8_t movement_lookups[] = {
     MOVE_UP_RIGHT,   // Y step =  1   [up right]
 };
 
-uint8_t get_motor_movement_instruction()
+uint8_t path_calculator_get_motor_movement_instruction()
 {
-    if (at_target()) {
+    if (path_calculator_at_target()) {
         return MOVE_NONE;
     }
     
