@@ -24,9 +24,7 @@ void setup()
         HALT;
     }
     log_info("Motors Initilized");
-    
-    set_state_register_carriage();
-    
+
     pinMode(INSTRUCTION_READY_PIN_IN, INPUT);
 }
 

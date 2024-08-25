@@ -14,8 +14,6 @@
 #define FORWARD 1
 #define BACKWARD 2
 
-#define NA 0
-
 // Global Variables
 unsigned int current_pos_x = 0; // measured in steps
 unsigned int current_pos_y = 0;

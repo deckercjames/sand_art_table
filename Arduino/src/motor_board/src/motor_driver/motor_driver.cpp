@@ -36,7 +36,7 @@ bool init_motors()
     digitalWrite(LEFT_MOTOR_EN_PIN, MOTOR_ENABLED);
     digitalWrite(RIGHT_MOTOR_EN_PIN, MOTOR_ENABLED);
     
-    motor_state = MOTOR_STATE_IDLE;
+    motor_state = MOTOR_STATE_REGISTER_CARRIAGE;
     
     init_registration();
     
@@ -49,25 +49,26 @@ static void _make_movement(move_instr_t move)
     digitalWrite(LEFT_MOTOR_DIR_PIN,  ((move >> 7) & 0x01));
     digitalWrite(RIGHT_MOTOR_DIR_PIN, ((move >> 3) & 0x01));
     
+    unsigned int motor_speed_delay = MOTOR_SPEED;
+    // If moving diagonally, slow down by a factor of root 2
+    if (move == MOVE_UP_LEFT || move == MOVE_UP_RIGHT ||
+        move == MOVE_DOWN_LEFT || move == MOVE_DOWN_RIGHT) {
+        motor_speed_delay = MOTOR_SPEED_DIAG;
+    }
+    
     // One or two steps for each motor
     for (int i = 0; i < 2; i++)
     {
         digitalWrite(LEFT_MOTOR_STEP_PIN,  (move >> (4 + i)) & 0x1);
         digitalWrite(RIGHT_MOTOR_STEP_PIN, (move >> (0 + i)) & 0x1);
         
-        delay(MOTOR_SPEED);
+        delayMicroseconds(motor_speed_delay);
         
         digitalWrite(LEFT_MOTOR_STEP_PIN,  LOW);
         digitalWrite(RIGHT_MOTOR_STEP_PIN, LOW);
         
-        delay(MOTOR_SPEED);
+        delayMicroseconds(motor_speed_delay);
     }
-}
-
-void set_state_register_carriage()
-{
-    motor_state = MOTOR_STATE_REGISTER_CARRIAGE;
-    begin_regestration();
 }
 
 void release_motors()

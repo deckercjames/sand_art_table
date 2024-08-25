@@ -13,7 +13,6 @@
 #define REGISTRATION_EXTRA_DIST_MILLIS 200
 
 typedef enum {
-    REGISTRATION_STATE_IDLE,
     REGISTRATION_STATE_START,
     REGISTRATION_STATE_Y_NEG,
     REGISTRATION_STATE_Y_DELAY,
@@ -21,6 +20,7 @@ typedef enum {
     REGISTRATION_STATE_X_NEG,
     REGISTRATION_STATE_X_DELAY,
     REGISTRATION_STATE_X_POS,
+    REGISTRATION_STATE_SANDBOX_OFFSET,
     REGISTRATION_COMPLETE,
     REGISTRATION_STATE_HALT,
 } registration_state_t;
@@ -35,19 +35,13 @@ void init_registration()
     // Initilize Limit Switches
     pinMode(LIMIT_SWITCH_X_PIN_INPUT, INPUT_PULLUP);
     pinMode(LIMIT_SWITCH_Y_PIN_INPUT, INPUT_PULLUP);
-    
-    log_debug_value("limit x value", digitalRead(LIMIT_SWITCH_X_PIN_INPUT));
-    log_debug_value("limit y value", digitalRead(LIMIT_SWITCH_Y_PIN_INPUT));
-}
 
-void begin_regestration()
-{
     registration_state = REGISTRATION_STATE_START;
 }
 
 bool registration_complete()
 {
-    return registration_state == REGISTRATION_STATE_IDLE;
+    return registration_state == REGISTRATION_COMPLETE;
 }
 
 /**
@@ -86,11 +80,9 @@ static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int tar
 bool service_register_carriage(move_instr_t *movement)
 {
     *movement = 0;
-
+    
     switch(registration_state)
     {
-        case REGISTRATION_STATE_IDLE:
-            break;
         case REGISTRATION_STATE_START:
             log_debug("Beginning to register carriage...");
             registration_state = REGISTRATION_STATE_Y_NEG;
@@ -144,14 +136,27 @@ bool service_register_carriage(move_instr_t *movement)
                 LIMIT_SWITCH_X_PIN_INPUT,
                 LIMIT_SWITCH_RELEASED,
                 MOVE_RIGHT,
-                REGISTRATION_COMPLETE,
+                REGISTRATION_STATE_SANDBOX_OFFSET,
                 MM_TO_STEPS( REGISTRATION_EXTRA_DIST_MILLIS )
             );
-        case REGISTRATION_COMPLETE:
-            log_info("Carriage registration complete.");
-            registration_state = REGISTRATION_STATE_IDLE;
+        case REGISTRATION_STATE_SANDBOX_OFFSET:
+            bool make_x_step = regestration_steps_taken < MM_TO_STEPS(SAND_BOX_OFFSET_X_MM);
+            bool make_y_step = regestration_steps_taken < MM_TO_STEPS(SAND_BOX_OFFSET_Y_MM);
+            regestration_steps_taken++;
+            if (make_x_step && make_y_step) {
+                *movement = MOVE_UP_RIGHT;
+            } else if (make_x_step) {
+                *movement = MOVE_RIGHT;
+            } else if (make_y_step) {
+                *movement = MOVE_UP;
+            } else {
+                log_info("Offset to sand box accounted for");
+                registration_state = REGISTRATION_COMPLETE;
+                regestration_steps_taken = 0;
+            }
             break;
-        
+        case REGISTRATION_COMPLETE:
+            break;
         case REGISTRATION_STATE_HALT:
         default:
             return false;

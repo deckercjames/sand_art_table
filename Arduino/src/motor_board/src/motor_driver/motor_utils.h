@@ -13,6 +13,8 @@ typedef uint8_t move_instr_t;
 
 #define MOVE_NONE 0
 
+#define NA 0
+
 #define ONE_STEP   (0x1)
 #define TWO_STEPS  (0x1 | 0x2)
 

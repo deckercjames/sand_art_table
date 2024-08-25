@@ -6,8 +6,6 @@
 
 bool init_motors();
 
-void set_state_register_carriage();
-
 void release_motors();
 
 bool ready_for_next_instr();

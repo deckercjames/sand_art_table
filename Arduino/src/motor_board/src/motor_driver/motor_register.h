@@ -6,8 +6,6 @@
 
 void init_registration();
 
-void begin_regestration();
-
 bool registration_complete();
 
 bool service_register_carriage(uint8_t *movement);
