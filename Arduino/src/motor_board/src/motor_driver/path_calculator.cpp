@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include "config.h"
+#include "logging.h"
 #include "motor_utils.h"
 
 // Redefine the stepper motor directions for implementation

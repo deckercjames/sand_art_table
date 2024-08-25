@@ -14,7 +14,7 @@ typedef uint8_t move_instr_t;
 #define MOVE_NONE 0
 
 #define ONE_STEP   (0x1)
-#define TWO_STEPS  (0x3)
+#define TWO_STEPS  (0x1 | 0x2)
 
 #define MOVEMENT(left_dir, left_steps, right_dir, right_steps) ( ((left_dir | left_steps) << 4) | (right_dir | right_steps) )
 

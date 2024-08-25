@@ -36,8 +36,8 @@ void wire_request_provide_next_pos()
     log_debug_value("Sending Position [x 100um]", next_location.x_location_100um);
     log_debug_value("Sending Position [y 100um]", next_location.y_location_100um);
     location_msg_t outgoing_msg = {
-        .x_location_steps = next_location.x_location_100um / UM_PER_STEP,
-        .y_location_steps = next_location.y_location_100um / UM_PER_STEP,
+        .x_location_steps = UM100_TO_STEPS(next_location.x_location_100um),
+        .y_location_steps = UM100_TO_STEPS(next_location.y_location_100um),
     };
     Wire.write((const char *) &outgoing_msg, sizeof(location_msg_t));
     if (sd_state == SD_STATE_SEND_INSTR_PENDING) {

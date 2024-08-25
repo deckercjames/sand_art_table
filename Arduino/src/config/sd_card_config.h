@@ -13,6 +13,6 @@
 #define INPUT_BUTTON_4_PIN 8
 
 // Output Pin
-#define INSTRUCTION_READY_PIN_OUT 6
+#define INSTRUCTION_READY_PIN_OUT 5
 
 #endif //SD_CARD_CONFIG_H__

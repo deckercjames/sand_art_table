@@ -17,7 +17,7 @@ fi
 
 # CLOSE ANY OPEN SCREENS
 # screen -X quit
-pkill SCREEN
+# pkill SCREEN
 
 # UPLOAD
 echo Uploading

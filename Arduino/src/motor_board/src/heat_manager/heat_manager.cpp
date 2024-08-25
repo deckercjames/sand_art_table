@@ -1,6 +1,8 @@
 
 #include "heat_manager.h"
 
+#include <Arduino.h>
+
 #include "config.h"
 #include "utils.h"
 #include "logging.h"
@@ -18,7 +20,17 @@ void manage_heat()
 {
     int sensor_value = analogRead(THERMOMETER_ANALOG_IN_PIN);
     
-    temp_f = ((THERMOMETER_POWER_MILLIVOLTS - 500.0f) * 0.18f) + 32.0f;
+    log_debug_value("Sensot RAW", sensor_value);
+    
+    float voltage = (sensor_value * 0.004882814);
+    
+    log_debug_value("Volts", voltage);
+    
+    float temp_c = (voltage - 0.5f) * 100.0f;
+    
+    log_debug_value("Temperature C", temp_c);
+    
+    temp_f = temp_c * (9.0/5.0) + 32.0;
     
     log_debug_value("Current temerature (deg. F)", temp_f);
     

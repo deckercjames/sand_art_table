@@ -68,6 +68,7 @@ static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int tar
     }
     
     if (regestration_steps_taken > max_registration_steps) {
+        log_debug_value("Max steps", max_registration_steps);
         log_error("Max registration steps reached");
         registration_state = REGISTRATION_STATE_HALT;
         return false;

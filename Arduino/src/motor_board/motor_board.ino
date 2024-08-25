@@ -13,6 +13,8 @@
 
 void setup()
 {
+    LOG_INIT(SERIAL_BAUD);
+
     Wire.begin();
     
     init_heat_manager();
@@ -25,7 +27,7 @@ void setup()
     
     set_state_register_carriage();
     
-    pinMode(INSTRUCTION_READY_PIN_IN, INPUT_PULLUP);
+    pinMode(INSTRUCTION_READY_PIN_IN, INPUT);
 }
 
 static void _get_next_position_from_wire(location_msg_t *location)
@@ -61,15 +63,15 @@ static void _get_next_position_from_wire(location_msg_t *location)
 
 void loop()
 {
-    manage_heat();
-    if (!motors_operable()) {
-        HALT;
-    }
+    // manage_heat();
+    // if (!motors_operable()) {
+    //     log_fatal("Motors have overheated. Halting");
+    //     HALT;
+    // }
     
     // Read next instruction if necesssary
-    if (at_target()) {
+    if (ready_for_next_instr()) {
         if (digitalRead(INSTRUCTION_READY_PIN_IN) != INSTRUCTION_READY) {
-            log_debug("Next instruction not ready");
             return;
         }
         location_msg_t target_position;

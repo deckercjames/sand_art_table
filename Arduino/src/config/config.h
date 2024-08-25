@@ -20,7 +20,7 @@
 #define SAND_BOX_OFFSET_X_MM 9
 #define SAND_BOX_OFFSET_Y_MM 16
 
-#define STEPS_PER_MM 5
+#define STEPS_PER_MM 10
 
 // Interboard commuication (movement instructions)
 #define SD_CARD_BOARD_I2C_ADDR 14

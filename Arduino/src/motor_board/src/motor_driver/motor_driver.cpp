@@ -15,9 +15,8 @@
 typedef enum {
     MOTOR_STATE_IDLE,
     MOTOR_STATE_REGISTER_CARRIAGE,
-    MOTOR_STATE_MOVING,
+    MOTOR_STATE_DRAWING,
     MOTOR_STATE_THERMO_THROTTLE,
-    MOTOR_STATE_INSTRUCTION_PENDING,
     MOTOR_STATE_HALT,
 } motor_state_t;
 
@@ -86,8 +85,8 @@ void service_motors()
         case MOTOR_STATE_REGISTER_CARRIAGE:
         {
             if (registration_complete()) {
-                log_info("Motor regestration complete. Transitioning to INSTR_PENDING");
-                motor_state = MOTOR_STATE_INSTRUCTION_PENDING;
+                log_info("Motor regestration complete. Transitioning to MOTOR_STATE_DRAWING");
+                motor_state = MOTOR_STATE_DRAWING;
                 break;
             }
             
@@ -105,9 +104,9 @@ void service_motors()
             _make_movement(movement);
             break;
         }
-        case MOTOR_STATE_MOVING:
+        case MOTOR_STATE_DRAWING:
         {
-            if (at_target()) {
+            if (path_calculator_at_target()) {
                 break;
             }
             move_instr_t move = path_calculator_get_motor_movement_instruction();
@@ -123,12 +122,12 @@ void service_motors()
 void set_target_pos_steps(const location_msg_t *target_location)
 {
     path_calculator_set_target_pos_steps(
-        max(target_location->x_location_steps, MM_TO_STEPS(TABLE_DIM_X_MM)),
-        max(target_location->y_location_steps, MM_TO_STEPS(TABLE_DIM_Y_MM))
+        min(target_location->x_location_steps, MM_TO_STEPS(TABLE_DIM_X_MM)),
+        min(target_location->y_location_steps, MM_TO_STEPS(TABLE_DIM_Y_MM))
     );
 }
 
-bool at_target()
+bool ready_for_next_instr()
 {
-    return path_calculator_at_target();
+    return motor_state == MOTOR_STATE_DRAWING && path_calculator_at_target();
 }

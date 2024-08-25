@@ -10,7 +10,7 @@ void set_state_register_carriage();
 
 void release_motors();
 
-bool at_target();
+bool ready_for_next_instr();
 
 void set_target_pos_steps(const location_msg_t *target_location);
 
