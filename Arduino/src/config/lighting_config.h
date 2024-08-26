@@ -7,13 +7,17 @@
 #define LED_SPEED_PIN     (A1)
 #define LED_PATTERN_PIN   (A2)
 
+#define INVERT_BRIGHTNESS_POT true
+#define INVERT_SPEED_POT      true
+#define INVERT_PATTERN_POT    false
+
 // Output Pins
-#define LED_STRIP_PIN 8
+#define LED_STRIP_PIN 2
 
 // Strip Properties
 #define LED_COUNT 176
 
-// MISC
-#define SPEED_MODIFIER 0.3f
+// Max speed in LEDs / Sec.
+#define SPEED_MODIFIER 15.0f
 
 #endif // LIGHTING_CONFIG_H__

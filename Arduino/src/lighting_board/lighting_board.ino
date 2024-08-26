@@ -6,6 +6,7 @@
 
 #include "config.h"
 #include "logging.h"
+#include "utils.h"
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -15,6 +16,9 @@ float cos_table[LED_COUNT];
 
 int current_patern_idx;
 
+int anchor_led;
+unsigned long last_update_time_ms;
+
 void setup()
 {
     LOG_INIT(SERIAL_BAUD);
@@ -23,9 +27,11 @@ void setup()
     strip.show();            // Turn OFF all pixels ASAP
 
     current_patern_idx = 0;
+    anchor_led = 0;
+    last_update_time_ms = 0;
 
     for (int i = 0; i < LED_COUNT; i++) {
-        cos_table[i] = 0.5f - (cos(((float) i / (LED_COUNT - 1)) * PI) * 0.5f);
+        cos_table[i] = 0.5f - (cos(((float) i / (LED_COUNT - 1)) * PI * 2) * 0.5f);
     }
 
     log_info("Lighting initilized");
@@ -46,16 +52,28 @@ const strip_pattern_t pattern_table[] = {
 
 void loop()
 {
+    // delay(1000);
     // Read Pot Values
     int brightness_val = analogRead(LED_BIGHTNESS_PIN);
     int speed_val      = analogRead(LED_SPEED_PIN);
     int pattern_val    = analogRead(LED_PATTERN_PIN);
     
+    if (INVERT_BRIGHTNESS_POT) { brightness_val = 1023 - brightness_val; }
+    if (INVERT_SPEED_POT)      { speed_val      = 1023 - speed_val;      }
+    if (INVERT_PATTERN_POT)    { pattern_val    = 1023 - pattern_val;    }
+    
+    log_debug_value("Brightness POT", brightness_val);
+    log_debug_value("Speed POT", speed_val);
+    log_debug_value("Pattern POT", pattern_val);
+    
     // Set brightness
     strip.setBrightness(brightness_val >> 2);
-    
+
     // Set anchor LED
-    int anchor_led = ((int) ((millis() * SPEED_MODIFIER)/ speed_val)) % LED_COUNT;
+    unsigned int delta_time = millis() - last_update_time_ms;
+    float normalized_speed = speed / 1023.0f;
+    anchor_led += ((int) (((float) delta_time / SECS_TO_MILLIS) * SPEED_MODIFIER * normalized_speed * normalized_speed)) % LED_COUNT;
+    last_update_time_ms = millis();
     
     float intra_pattern_val = 0.0f;
     
@@ -70,8 +88,8 @@ void loop()
         }
     }
     
-    
-    unsigned int start_hue = pattern_val << 6;
+    log_debug_value("Patern Idx", current_patern_idx);
+    log_debug_value("Intra-pattern val", intra_pattern_val);
     
     for (int i = 0; i <= LED_COUNT; i++) {
         uint16_t pixel_hue = pattern_table[current_patern_idx].fnc_ptr(i, intra_pattern_val);
