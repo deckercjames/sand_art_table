@@ -20,8 +20,8 @@ void setup()
 {
     LOG_INIT(SERIAL_BAUD);
     
-    strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-    strip.show();            // Turn OFF all pixels ASAP
+    strip.begin();
+    strip.show();
 
     current_patern_idx = 0;
     anchor_led = 0;
