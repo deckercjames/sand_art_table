@@ -27,7 +27,7 @@ void setup()
     anchor_led = 0;
     last_update_time_ms = 0;
     
-    init_pattern_helpers(&strip);
+    init_pattern_helpers();
 
     log_info("Lighting initilized");
 }
@@ -90,7 +90,11 @@ void loop()
 
     // Set led
     for (int i = 0; i <= LED_COUNT; i++) {
-        uint32_t pixel_color = pattern_table[current_patern_idx].fnc_ptr(i, intra_pattern_val);
+        uint32_t hsv_packed = pattern_table[current_patern_idx].fnc_ptr(i, intra_pattern_val);
+        uint32_t pixel_color = strip.ColorHSV(
+            hsv_packed >> 16,
+            (hsv_packed >> 8) & 0xFF,
+            hsv_packed & 0xFF);
         pixel_color = strip.gamma32(pixel_color);
         int led_idx = (i + anchor_led) % LED_COUNT;
         strip.setPixelColor(led_idx, pixel_color);
