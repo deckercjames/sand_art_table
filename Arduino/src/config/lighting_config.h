@@ -18,6 +18,6 @@
 #define LED_COUNT 176
 
 // Max speed in LEDs / Sec.
-#define SPEED_MODIFIER 15.0f
+#define SPEED_MODIFIER 120.0f
 
 #endif // LIGHTING_CONFIG_H__

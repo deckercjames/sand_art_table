@@ -13,7 +13,7 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
 int current_patern_idx;
 
-int anchor_led;
+float anchor_led;
 unsigned long last_update_time_ms;
 
 void setup()
@@ -67,9 +67,12 @@ void loop()
     strip.setBrightness(brightness_val >> 2);
 
     // Set anchor LED
-    unsigned int delta_time = millis() - last_update_time_ms;
-    float normalized_speed = speed_val / POT_MAX_VAL;
-    anchor_led += ((int) (((float) delta_time / SECS_TO_MILLIS) * SPEED_MODIFIER * normalized_speed * normalized_speed)) % LED_COUNT;
+    const unsigned long delta_time = millis() - last_update_time_ms;
+    const float normalized_speed = (float) speed_val / POT_MAX_VAL;
+    anchor_led += ((float) delta_time / SECS_TO_MILLIS) * SPEED_MODIFIER * normalized_speed * normalized_speed;
+    while (anchor_led > LED_COUNT) {
+        anchor_led -= LED_COUNT;
+    }
     last_update_time_ms = millis();
     
     // Select Pattern
@@ -89,14 +92,14 @@ void loop()
     intra_pattern_val = min(1.0f, max(0, intra_pattern_val));
 
     // Set led
-    for (int i = 0; i <= LED_COUNT; i++) {
+    for (int i = 0; i < LED_COUNT; i++) {
         uint32_t hsv_packed = pattern_table[current_patern_idx].fnc_ptr(i, intra_pattern_val);
         uint32_t pixel_color = strip.ColorHSV(
-            hsv_packed >> 16,
-            (hsv_packed >> 8) & 0xFF,
-            hsv_packed & 0xFF);
+            (uint16_t) (hsv_packed >> 16),
+            (uint8_t) ((hsv_packed >> 8) & 0xFF),
+            (uint8_t) (hsv_packed & 0xFF));
         pixel_color = strip.gamma32(pixel_color);
-        int led_idx = (i + anchor_led) % LED_COUNT;
+        int led_idx = (i + ((int) anchor_led)) % LED_COUNT;
         strip.setPixelColor(led_idx, pixel_color);
     }
     
