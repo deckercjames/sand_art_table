@@ -12,7 +12,11 @@
 #define INPUT_BUTTON_3_PIN 7
 #define INPUT_BUTTON_4_PIN 8
 
-// Output Pin
+// Timing
+#define FIRST_INSTR_TIMEOUT_MILLIS 500
+
+// Interboard Communication
 #define INSTRUCTION_READY_PIN_OUT 5
+#define SIG_INT_PIN_OUT 4
 
 #endif //SD_CARD_CONFIG_H__

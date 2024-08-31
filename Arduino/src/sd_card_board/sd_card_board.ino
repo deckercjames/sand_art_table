@@ -16,14 +16,16 @@
 
 typedef enum {
     SD_STATE_IDLE,
+    SD_STATE_LOAD_FIRST_INSTR,
     SD_STATE_LOAD_NEXT_INSTR,
+    SD_STATE_SEND_FIRST_INSTR_PENDING,
     SD_STATE_SEND_INSTR_PENDING,
     SD_STATE_CLOSE_FILE,
     SD_STATE_
 } sd_state_t;
 
 volatile sd_state_t sd_state;
-unsigned int state_start_time_millis;
+unsigned int instr_ready_time_millis;
 
 volatile gcode_instruction_t next_location;
 
@@ -33,14 +35,15 @@ void wire_request_provide_next_pos()
 {
     log_info("Received wire request for instruction");
     digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
+    digitalWrite(SIG_INT_PIN_OUT, LOW);
     log_debug_value("Sending Position [x 100um]", next_location.x_location_100um);
     log_debug_value("Sending Position [y 100um]", next_location.y_location_100um);
-    location_msg_t outgoing_msg = {
+    const location_msg_t outgoing_msg = {
         .x_location_steps = UM100_TO_STEPS(next_location.x_location_100um),
         .y_location_steps = UM100_TO_STEPS(next_location.y_location_100um),
     };
-    Wire.write((const char *) &outgoing_msg, sizeof(location_msg_t));
-    if (sd_state == SD_STATE_SEND_INSTR_PENDING) {
+    Wire.write((const uint8_t *) &outgoing_msg, sizeof(location_msg_t));
+    if (sd_state == SD_STATE_SEND_INSTR_PENDING || sd_state == SD_STATE_SEND_FIRST_INSTR_PENDING) {
         sd_state = SD_STATE_LOAD_NEXT_INSTR;
     }
 }
@@ -53,6 +56,9 @@ void setup()
     // Setup pin to indicate a new instruction is ready
     pinMode(INSTRUCTION_READY_PIN_OUT, OUTPUT);
     digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
+    
+    pinMode(SIG_INT_PIN_OUT, OUTPUT);
+    digitalWrite(SIG_INT_PIN_OUT, LOW);
 
     // Clear next instruction
     memset(&next_location, 0, sizeof(location_msg_t));
@@ -76,21 +82,23 @@ void setup()
 
 void loop()
 {
-    // delay(1000);
     int button_pressed = check_button_pressed();
-    // log_debug_value("main: button val", button_pressed);
     
     if (button_pressed) {
         log_info("main: button pressed");
-        close_current_file();
+        if (!file_completed()) {
+            close_current_file();
+            digitalWrite(SIG_INT_PIN_OUT, HIGH);
+        }
         open_file_idx(button_pressed);
-        sd_state = SD_STATE_LOAD_NEXT_INSTR;
+        sd_state = SD_STATE_LOAD_FIRST_INSTR;
     }
     
     switch(sd_state)
     {
         case SD_STATE_IDLE:
             break;
+        case SD_STATE_LOAD_FIRST_INSTR:
         case SD_STATE_LOAD_NEXT_INSTR:
         {
             if (file_completed()) {
@@ -112,11 +120,16 @@ void loop()
                 log_debug("Instruction does not change location");
                 break;
             }
-            log_debug("Pending send instruction");
             digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_READY);
-            sd_state = SD_STATE_SEND_INSTR_PENDING;
+            instr_ready_time_millis = millis();
+            sd_state = (sd_state == SD_STATE_LOAD_FIRST_INSTR) ? SD_STATE_SEND_FIRST_INSTR_PENDING : SD_STATE_SEND_INSTR_PENDING;
             break;
         }
+        case SD_STATE_SEND_FIRST_INSTR_PENDING:
+            if (millis() - instr_ready_time_millis > FIRST_INSTR_TIMEOUT_MILLIS) {
+                sd_state = SD_STATE_CLOSE_FILE;
+            }
+            break;
         case SD_STATE_SEND_INSTR_PENDING:
             break;
         case SD_STATE_CLOSE_FILE:

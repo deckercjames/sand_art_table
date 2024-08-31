@@ -10,7 +10,7 @@
 #define SERIAL_BAUD 9600
 
 // Physical Input
-#define DEBOUNCE_TIME_MILLIS 10
+#define DEBOUNCE_TIME_MILLIS 20
 #define POT_HYSTERESIS 5
 
 // Sand Table Size

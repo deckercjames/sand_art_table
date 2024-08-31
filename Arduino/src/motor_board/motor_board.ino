@@ -8,6 +8,7 @@
 #include "src/motor_driver/motor_driver.h"
 #include "src/motor_driver/motor_utils.h"
 #include "src/heat_manager/heat_manager.h"
+#include "src/input/toggle_switch.h"
 
 #define HALT do { release_motors(); while(1); } while(0)
 
@@ -18,6 +19,8 @@ void setup()
     Wire.begin();
     
     init_heat_manager();
+    
+    init_toggle_switch();
 
     if (!init_motors()) {
         log_fatal("Could not initilize motors");
@@ -26,6 +29,7 @@ void setup()
     log_info("Motors Initilized");
 
     pinMode(INSTRUCTION_READY_PIN_IN, INPUT);
+    pinMode(SIG_INT_PIN_IN, INPUT);
 }
 
 static void _get_next_position_from_wire(location_msg_t *location)
@@ -67,8 +71,13 @@ void loop()
     //     HALT;
     // }
     
+    toggle_switch_position_t toggle_pos = check_toggle_switch();
+    if (toggle_pos == TOGGLE_POSITION_OFF) {
+        return;
+    }
+
     // Read next instruction if necesssary
-    if (ready_for_next_instr()) {
+    if (ready_for_next_instr() || digitalRead(SIG_INT_PIN_IN)) {
         if (digitalRead(INSTRUCTION_READY_PIN_IN) != INSTRUCTION_READY) {
             return;
         }

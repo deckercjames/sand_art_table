@@ -91,5 +91,5 @@ void get_next_line(char *buf, unsigned int buf_size)
 
 bool file_completed()
 {
-    return !current_file.available();
+    return !current_file || !current_file.available();
 }
