@@ -32,16 +32,17 @@ void setup()
     pinMode(SIG_INT_PIN_IN, INPUT);
 }
 
-static void _get_next_position_from_wire(location_msg_t *location)
+static void _get_next_position_from_wire()
 {
-    uint8_t *received_buffer = (uint8_t *) location;
+    location_msg_t location;
+    uint8_t *received_buffer = (uint8_t *) &location;
     
     int index = 0;
-    
+
     log_debug("Requesting next position from wire");
     
-    location->x_location_steps = 0;
-    location->y_location_steps = 0;
+    location.x_location_steps = 0;
+    location.y_location_steps = 0;
     
     Wire.requestFrom(SD_CARD_BOARD_I2C_ADDR, 4);
     
@@ -59,8 +60,10 @@ static void _get_next_position_from_wire(location_msg_t *location)
         log_error("Received too few bytes");
     }
 
-    log_debug_value("Received Position [x steps]", location->x_location_steps);
-    log_debug_value("Received Position [y steps]", location->y_location_steps);
+    log_debug_value("Received Position [x steps]", location.x_location_steps);
+    log_debug_value("Received Position [y steps]", location.y_location_steps);
+
+    set_target_pos_steps(&location);
 }
 
 void loop()
@@ -75,15 +78,17 @@ void loop()
     if (toggle_pos == TOGGLE_POSITION_OFF) {
         return;
     }
+    set_drawing_type(toggle_pos == TOGGLE_POSITION_UP ? DRAWING_TYPE_BEZIER : DRAWING_TYPE_IMAGE);
 
     // Read next instruction if necesssary
-    if (ready_for_next_instr() || digitalRead(SIG_INT_PIN_IN)) {
-        if (digitalRead(INSTRUCTION_READY_PIN_IN) != INSTRUCTION_READY) {
-            return;
+    if (is_in_image_mode()) {
+        if (digitalRead(SIG_INT_PIN_IN) && digitalRead(INSTRUCTION_READY_PIN_IN) == INSTRUCTION_READY) {
+            log_info("Interupt signal received");
+            _get_next_position_from_wire();
+        } else if (ready_for_next_instr() && digitalRead(INSTRUCTION_READY_PIN_IN) == INSTRUCTION_READY) {
+            log_info("Motors are ready for next instruction");
+            _get_next_position_from_wire();
         }
-        location_msg_t target_position;
-        _get_next_position_from_wire(&target_position);
-        set_target_pos_steps(&target_position);
     }
     
     service_motors();

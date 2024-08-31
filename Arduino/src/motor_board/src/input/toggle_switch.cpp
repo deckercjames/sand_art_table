@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#include "logging.h"
 
 toggle_switch_position_t current_toggle_position;
 unsigned long debounce_until_time_millis;
@@ -24,13 +25,14 @@ toggle_switch_position_t check_toggle_switch()
     
     toggle_switch_position_t new_toggle_position = TOGGLE_POSITION_OFF;
     
-    if (digitalRead(TOGGLE_UP_IN_PIN)) {
+    if (digitalRead(TOGGLE_UP_IN_PIN) == LOW) {
         new_toggle_position = TOGGLE_POSITION_UP;
-    } else if (digitalRead(TOGGLE_DOWN_IN_PIN)) {
+    } else if (digitalRead(TOGGLE_DOWN_IN_PIN) == LOW) {
         new_toggle_position = TOGGLE_POSITION_DOWN;
     }
     
-    if (current_toggle_position == new_toggle_position) {
+    if (current_toggle_position != new_toggle_position) {
+        log_debug_value("Toggle Switch thrown", new_toggle_position);
         current_toggle_position = new_toggle_position;
         debounce_until_time_millis = millis() + DEBOUNCE_TIME_MILLIS;
     }

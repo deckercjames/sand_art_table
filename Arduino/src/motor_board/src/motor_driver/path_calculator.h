@@ -9,7 +9,9 @@
 #define TABLE_SIZE_X_STEPS MM_TO_STEPS(TABLE_DIM_X_MM)
 #define TABLE_SIZE_Y_STEPS MM_TO_STEPS(TABLE_DIM_Y_MM)
 
+void init_path_calculator(const uint16_t *current_pos_x, const uint16_t *current_pos_y);
 void path_calculator_set_target_pos_steps(uint16_t target_x_steps, uint16_t target_y_steps);
+void path_calculator_reset_target();
 bool path_calculator_at_target();
 uint8_t path_calculator_get_motor_movement_instruction();
 

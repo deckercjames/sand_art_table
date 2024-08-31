@@ -26,7 +26,7 @@
 
 // Communication Input Pin
 #define INSTRUCTION_READY_PIN_IN 2
-#define SIG_INT_PIN_IN A4
+#define SIG_INT_PIN_IN A1
 
 // Cooling Fans
 #define FANS_PIN 5
@@ -34,8 +34,8 @@
 #define FANS_ON_THRESHOLD_F 85
 
 // Toggle Switch
-#define TOGGLE_UP_IN_PIN 5
-#define TOGGLE_DOWN_IN_PIN 6
+#define TOGGLE_UP_IN_PIN 11
+#define TOGGLE_DOWN_IN_PIN 12
 
 typedef enum toggle_switch_position {
     TOGGLE_POSITION_OFF,

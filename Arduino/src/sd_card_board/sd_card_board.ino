@@ -25,7 +25,7 @@ typedef enum {
 } sd_state_t;
 
 volatile sd_state_t sd_state;
-unsigned int instr_ready_time_millis;
+unsigned long instr_ready_time_millis;
 
 volatile gcode_instruction_t next_location;
 
@@ -88,6 +88,7 @@ void loop()
         log_info("main: button pressed");
         if (!file_completed()) {
             close_current_file();
+            digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
             digitalWrite(SIG_INT_PIN_OUT, HIGH);
         }
         open_file_idx(button_pressed);
@@ -127,6 +128,10 @@ void loop()
         }
         case SD_STATE_SEND_FIRST_INSTR_PENDING:
             if (millis() - instr_ready_time_millis > FIRST_INSTR_TIMEOUT_MILLIS) {
+                log_info("Motor board timed out");
+                log_debug_value("Intr ready time", instr_ready_time_millis);
+                log_debug_value("Current time", millis());
+                digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
                 sd_state = SD_STATE_CLOSE_FILE;
             }
             break;

@@ -15,11 +15,11 @@
 #define BACKWARD 2
 
 // Global Variables
-unsigned int current_pos_x = 0; // measured in steps
-unsigned int current_pos_y = 0;
+const uint16_t *current_pos_x_ptr = 0; // measured in steps
+const uint16_t *current_pos_y_ptr = 0;
 
-unsigned int target_pos_x; // measured in steps
-unsigned int target_pos_y;
+uint16_t target_pos_x; // measured in steps
+uint16_t target_pos_y;
 
 int delta_x;
 int delta_y;
@@ -29,26 +29,32 @@ int sign_delta_y;
 
 int error;
 
+void init_path_calculator(const uint16_t *current_pos_x, const uint16_t *current_pos_y)
+{
+    current_pos_x_ptr = current_pos_x;
+    current_pos_y_ptr = current_pos_y;
+}
+
 void path_calculator_set_target_pos_steps(uint16_t target_x, uint16_t target_y)
 {
     target_pos_x = min(target_x, TABLE_SIZE_X_STEPS);
     target_pos_y = min(target_y, TABLE_SIZE_Y_STEPS);
     
     // set x variables
-    if (target_pos_x > current_pos_x) {
-        delta_x = target_pos_x - current_pos_x;
+    if (target_pos_x > *current_pos_x_ptr) {
+        delta_x = target_pos_x - *current_pos_x_ptr;
         sign_delta_x = 1;
     } else {
-        delta_x = current_pos_x - target_pos_x;
+        delta_x = *current_pos_x_ptr - target_pos_x;
         sign_delta_x = -1;
     }
     
     // set y variables
-    if (target_pos_y > current_pos_y) {
-        delta_y = target_pos_y - current_pos_y;
+    if (target_pos_y > *current_pos_y_ptr) {
+        delta_y = target_pos_y - *current_pos_y_ptr;
         sign_delta_y = 1;
     } else {
-        delta_y = current_pos_y - target_pos_y;
+        delta_y = *current_pos_y_ptr - target_pos_y;
         sign_delta_y = -1;
     }
     delta_y = -delta_y;
@@ -56,9 +62,14 @@ void path_calculator_set_target_pos_steps(uint16_t target_x, uint16_t target_y)
     error = delta_x + delta_y;
 }
 
+void path_calculator_reset_target()
+{
+    path_calculator_set_target_pos_steps(target_pos_x, target_pos_y);
+}
+
 bool path_calculator_at_target()
 {
-    return (current_pos_x == target_pos_x) && (current_pos_y == target_pos_y);
+    return (*current_pos_x_ptr == target_pos_x) && (*current_pos_y_ptr == target_pos_y);
 }
 
 const uint8_t movement_lookups[] = {
@@ -88,7 +99,7 @@ uint8_t path_calculator_get_motor_movement_instruction()
     int step_y = 0;
     
     if (error_double >= delta_y) {
-        if (current_pos_x == target_pos_x) {
+        if (*current_pos_x_ptr == target_pos_x) {
             return MOVE_NONE;
         }
         error += delta_y;
@@ -96,17 +107,13 @@ uint8_t path_calculator_get_motor_movement_instruction()
     }
     
     if (error_double <= delta_x) {
-        if (current_pos_y == target_pos_y) {
+        if (*current_pos_y_ptr == target_pos_y) {
             return MOVE_NONE;
         }
         error += delta_x;
         step_y = sign_delta_y;
     }
-    
-    // Update the current position
-    current_pos_x += step_x;
-    current_pos_y += step_y;
-    
+
     // lookup the movement instruction
     const int lookup_idx = ((step_x + 1) * 3) + (step_y + 1);
     return movement_lookups[lookup_idx];
