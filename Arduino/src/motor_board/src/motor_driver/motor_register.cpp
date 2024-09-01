@@ -1,7 +1,6 @@
 
 #include "motor_register.h"
 
-#include "motor_utils.h"
 #include "config.h"
 #include "logging.h"
 #include "utils.h"
@@ -93,7 +92,7 @@ bool service_register_carriage(move_instr_t *movement)
                 movement,
                 LIMIT_SWITCH_Y_PIN_INPUT,
                 LIMIT_SWITCH_DEPRESSED,
-                MOVE_DOWN,
+                MOVE_INSTR_DOWN,
                 REGISTRATION_STATE_Y_DELAY,
                 MM_TO_STEPS( TABLE_DIM_Y_MM + REGISTRATION_EXTRA_DIST_MILLIS )
             );
@@ -109,7 +108,7 @@ bool service_register_carriage(move_instr_t *movement)
                 movement,
                 LIMIT_SWITCH_Y_PIN_INPUT,
                 LIMIT_SWITCH_RELEASED,
-                MOVE_UP,
+                MOVE_INSTR_UP,
                 REGISTRATION_STATE_X_NEG,
                 MM_TO_STEPS( REGISTRATION_EXTRA_DIST_MILLIS )
             );
@@ -119,7 +118,7 @@ bool service_register_carriage(move_instr_t *movement)
                 movement,
                 LIMIT_SWITCH_X_PIN_INPUT,
                 LIMIT_SWITCH_DEPRESSED,
-                MOVE_LEFT,
+                MOVE_INSTR_LEFT,
                 REGISTRATION_STATE_X_DELAY,
                 MM_TO_STEPS( TABLE_DIM_X_MM + REGISTRATION_EXTRA_DIST_MILLIS )
             );
@@ -135,7 +134,7 @@ bool service_register_carriage(move_instr_t *movement)
                 movement,
                 LIMIT_SWITCH_X_PIN_INPUT,
                 LIMIT_SWITCH_RELEASED,
-                MOVE_RIGHT,
+                MOVE_INSTR_RIGHT,
                 REGISTRATION_STATE_SANDBOX_OFFSET,
                 MM_TO_STEPS( REGISTRATION_EXTRA_DIST_MILLIS )
             );
@@ -144,11 +143,11 @@ bool service_register_carriage(move_instr_t *movement)
             bool make_y_step = regestration_steps_taken < MM_TO_STEPS(SAND_BOX_OFFSET_Y_MM);
             regestration_steps_taken++;
             if (make_x_step && make_y_step) {
-                *movement = MOVE_UP_RIGHT;
+                *movement = MOVE_INSTR_UP_RIGHT;
             } else if (make_x_step) {
-                *movement = MOVE_RIGHT;
+                *movement = MOVE_INSTR_RIGHT;
             } else if (make_y_step) {
-                *movement = MOVE_UP;
+                *movement = MOVE_INSTR_UP;
             } else {
                 log_info("Offset to sand box accounted for");
                 registration_state = REGISTRATION_COMPLETE;

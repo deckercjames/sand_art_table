@@ -11,30 +11,20 @@ typedef struct point {
     uint16_t y;
 } point_t;
 
-// Global Variables
-static const uint16_t *current_pos_x_ptr = 0; // measured in steps
-static const uint16_t *current_pos_y_ptr = 0;
-
 static point_t p0, p1, p2, p3, p4;
 
-static float t;
+static int bezier_segment;
 
-void init_bezier(const uint16_t *current_pos_x, const uint16_t *current_pos_y)
-{
-    current_pos_x_ptr = current_pos_x;
-    current_pos_y_ptr = current_pos_y;
-}
-
-static void randomize_point(point_t *point)
+static void _randomize_point(point_t *point)
 {
     point->x = random(MM_TO_STEPS(TABLE_DIM_X_MM));
     point->y = random(MM_TO_STEPS(TABLE_DIM_Y_MM));
 }
 
-static void randomize_segment_ending()
+static void _randomize_segment_ending()
 {
-    randomize_point(&p2);
-    randomize_point(&p4);
+    _randomize_point(&p2);
+    _randomize_point(&p4);
 
     // Set p3 to the midpoint of p2 and p4
     if (p2.x > p4.x) {
@@ -50,22 +40,31 @@ static void randomize_segment_ending()
     }
 }
 
-void start_bezier_path()
+void start_bezier_path(uint16_t current_pos_x, uint16_t current_pos_y)
 {
     log_info("Starting bezier path");
-    p0.x = *current_pos_x_ptr;
-    p0.y = *current_pos_y_ptr;
+    p0.x = current_pos_x;
+    p0.y = current_pos_y;
 
-    randomize_point(&p1);
+    _randomize_point(&p1);
 
-    randomize_segment_ending();
+    _randomize_segment_ending();
 
-    t = 0.0f;
+    bezier_segment = 0;
 }
 
-void get_next_dest_point(location_msg_t *location)
+void get_next_bezier_point(location_msg_t *location)
 {
-    if (*current_pos_x_ptr == p3.x && *current_pos_y_ptr == p3.y)
+    bezier_segment++;
+    
+    if (bezier_segment == BEZIER_SEGMENT_COUNT) {
+        log_info("Going to last control point of segment");
+        location->x_location_steps = p3.x;
+        location->y_location_steps = p3.y;
+        return;
+    }
+    
+    if (bezier_segment >= BEZIER_SEGMENT_COUNT)
     {
         log_debug("Bezier segment completed, planning next segment");
 
@@ -75,23 +74,11 @@ void get_next_dest_point(location_msg_t *location)
         p1.x = p4.x;
         p1.y = p4.y;
 
-        randomize_segment_ending();
-        t = 0.0f;
+        _randomize_segment_ending();
+        bezier_segment = 1;
     }
 
-    t += BEZIER_DELTA_T;
-
-    if (t >= 0.999f) {
-        log_info("Going to last control point of segment");
-        delay(1000);
-        log_debug_value("Cur pos [x steps]", *current_pos_x_ptr);
-        log_debug_value("Cur pos [y steps]", *current_pos_y_ptr);
-        log_debug_value("Last ctrl pt [x steps]", p3.x);
-        log_debug_value("Last ctrl pt [y steps]", p3.y);
-        location->x_location_steps = p3.x;
-        location->y_location_steps = p3.y;
-        return;
-    }
+    float t = (float) bezier_segment / BEZIER_SEGMENT_COUNT;
 
     const float a = CUBED(1.0f - t);
     const float b = 3 * SQUARED(1.0f - t) * t;

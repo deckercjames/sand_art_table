@@ -15,7 +15,7 @@
 #define RIGHT_MOTOR_EN_PIN 6
 
 // Motor Properties
-#define MOTOR_SPEED 1000
+#define MOTOR_SPEED_ORTH 1000
 #define MOTOR_SPEED_DIAG 1414
 #define STEPPER_MOTOR_STEPS 200
 #define MOTOR_REGISTER_EXTRA_DIST_MM 50
@@ -44,6 +44,6 @@ typedef enum toggle_switch_position {
 } toggle_switch_position_t;
 
 // Bezier
-#define BEZIER_DELTA_T 0.005f
+#define BEZIER_SEGMENT_COUNT 500
 
 #endif //MOTOR_CONFIG_H__

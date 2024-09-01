@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 
+#define HALT do {} while (1)
+
 #define UNUSED(x) (void) (x)
 
 #define PI 3.14159265f
@@ -33,5 +35,17 @@ typedef struct location_msg {
     uint16_t x_location_steps;
     uint16_t y_location_steps;
 } __attribute__((__packed__)) location_msg_t;
+
+typedef enum move_instr {
+    MOVE_INSTR_NONE = 0,
+    MOVE_INSTR_UP,
+    MOVE_INSTR_DOWN,
+    MOVE_INSTR_LEFT,
+    MOVE_INSTR_RIGHT,
+    MOVE_INSTR_UP_LEFT,
+    MOVE_INSTR_UP_RIGHT,
+    MOVE_INSTR_DOWN_LEFT,
+    MOVE_INSTR_DOWN_RIGHT,
+} move_instr_t;
 
 #endif //UTILS_H__

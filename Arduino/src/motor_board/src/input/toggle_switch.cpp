@@ -17,10 +17,17 @@ void init_toggle_switch()
     current_toggle_position = TOGGLE_POSITION_OFF;
 }
 
-toggle_switch_position_t check_toggle_switch()
+/**
+ * Check the current toggle switch position and if it was thrown
+ * 
+ * @param ret_position [out] set to the current position of the toggle switch
+ * @return true if the toggle swich was changed since the last time it was checked
+*/
+bool check_toggle_switch(toggle_switch_position_t *ret_position)
 {
     if (millis() < debounce_until_time_millis) {
-        return current_toggle_position;
+        *ret_position = current_toggle_position;
+        return false;
     }
 
     toggle_switch_position_t new_toggle_position = TOGGLE_POSITION_OFF;
@@ -30,12 +37,15 @@ toggle_switch_position_t check_toggle_switch()
     } else if (digitalRead(TOGGLE_DOWN_IN_PIN) == LOW) {
         new_toggle_position = TOGGLE_POSITION_DOWN;
     }
+    
+    *ret_position = new_toggle_position;
 
     if (current_toggle_position != new_toggle_position) {
         log_debug_value("Toggle Switch thrown", new_toggle_position);
         current_toggle_position = new_toggle_position;
         debounce_until_time_millis = millis() + DEBOUNCE_TIME_MILLIS;
+        return true;
     }
 
-    return current_toggle_position;
+    return false;
 }
