@@ -43,4 +43,7 @@ typedef enum toggle_switch_position {
     TOGGLE_POSITION_DOWN,
 } toggle_switch_position_t;
 
+// Bezier
+#define BEZIER_DELTA_T 0.005f
+
 #endif //MOTOR_CONFIG_H__

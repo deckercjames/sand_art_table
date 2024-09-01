@@ -9,6 +9,7 @@
 #include "src/motor_driver/motor_utils.h"
 #include "src/heat_manager/heat_manager.h"
 #include "src/input/toggle_switch.h"
+#include "src/motor_driver/bezier.h"
 
 #define HALT do { release_motors(); while(1); } while(0)
 
@@ -89,6 +90,10 @@ void loop()
             log_info("Motors are ready for next instruction");
             _get_next_position_from_wire();
         }
+    } else if (ready_for_next_instr()) {
+        location_msg_t location;
+        get_next_dest_point(&location);
+        set_target_pos_steps(&location);
     }
     
     service_motors();
