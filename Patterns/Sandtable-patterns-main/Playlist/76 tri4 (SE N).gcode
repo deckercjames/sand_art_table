@@ -13,7 +13,7 @@
 ;    Name: dither_tri4.thr
 ;    From file:: dither_tri4.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

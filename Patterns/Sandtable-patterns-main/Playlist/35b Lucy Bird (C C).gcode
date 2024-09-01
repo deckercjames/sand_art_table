@@ -13,7 +13,7 @@
 ;    Name: Hampton-on-Lucy 8-8-2015.thr
 ;    From file:: Hampton-on-Lucy 8-8-2015.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

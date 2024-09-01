@@ -13,7 +13,7 @@
 ;    Name: complexwoman.thr
 ;    From file:: complexwoman.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

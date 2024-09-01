@@ -13,7 +13,7 @@
 ;    Name: CleyHill 7-18-2017.thr
 ;    From file:: CleyHill 7-18-2017.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

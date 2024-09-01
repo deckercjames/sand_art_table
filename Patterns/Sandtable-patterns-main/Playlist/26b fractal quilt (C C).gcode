@@ -13,7 +13,7 @@
 ;    Name: Fractal.thr
 ;    From file:: Fractal.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: maze12download.thr
 ;    From file:: maze12download.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

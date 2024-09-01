@@ -13,7 +13,7 @@
 ;    Name: secretgarden.thr
 ;    From file:: secretgarden.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

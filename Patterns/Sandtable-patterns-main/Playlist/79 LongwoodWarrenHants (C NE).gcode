@@ -13,7 +13,7 @@
 ;    Name: LongwoodWarrenHants 7-10-2018.thr
 ;    From file:: LongwoodWarrenHants 7-10-2018.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

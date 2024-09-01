@@ -13,7 +13,7 @@
 ;    Name: goulet_heartswirl_ee.thr
 ;    From file:: goulet_heartswirl_ee.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

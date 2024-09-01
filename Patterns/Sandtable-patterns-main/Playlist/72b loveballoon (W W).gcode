@@ -13,7 +13,7 @@
 ;    Name: goulet_loveballoon_ee.thr
 ;    From file:: goulet_loveballoon_ee.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 14
 ;    Initial height: 14

@@ -13,7 +13,7 @@
 ;    Name: SierpinskiTriangle2.thr
 ;    From file:: SierpinskiTriangle2.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

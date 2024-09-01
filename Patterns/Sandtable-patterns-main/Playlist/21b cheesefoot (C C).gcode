@@ -13,7 +13,7 @@
 ;    Name: Cheesefoot Head 8-9-2012.thr
 ;    From file:: Cheesefoot Head 8-9-2012.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

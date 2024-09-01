@@ -13,7 +13,7 @@
 ;    Name: hero_9wave2.thr
 ;    From file:: hero_9wave2.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

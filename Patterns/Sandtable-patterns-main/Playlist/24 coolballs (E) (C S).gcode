@@ -37,7 +37,7 @@
 ;    Name: coolballs.thr
 ;    From file:: coolballs.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: HackpenHill 6-9-2018.thr
 ;    From file:: HackpenHill 6-9-2018.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

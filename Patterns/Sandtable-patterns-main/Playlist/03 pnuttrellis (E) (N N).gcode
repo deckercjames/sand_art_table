@@ -13,7 +13,7 @@
 ;    Name: goulet_pnuttrellis_ee.thr
 ;    From file:: goulet_pnuttrellis_ee.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

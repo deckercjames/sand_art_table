@@ -13,7 +13,7 @@
 ;    Name: BurstyBezier.thr
 ;    From file:: BurstyBezier.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

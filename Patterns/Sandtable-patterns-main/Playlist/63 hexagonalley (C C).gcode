@@ -13,7 +13,7 @@
 ;    Name: HexagonAlley.thr
 ;    From file:: HexagonAlley.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

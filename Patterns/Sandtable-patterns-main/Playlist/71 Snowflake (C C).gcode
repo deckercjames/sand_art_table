@@ -13,7 +13,7 @@
 ;    Name: snowflake.thr
 ;    From file:: snowflake.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

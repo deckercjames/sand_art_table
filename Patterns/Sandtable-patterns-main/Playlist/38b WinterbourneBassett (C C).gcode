@@ -13,7 +13,7 @@
 ;    Name: WinterbourneBassett 6-1-1997.thr
 ;    From file:: WinterbourneBassett 6-1-1997.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: Muncombe Hill 7-14-2018.thr
 ;    From file:: Muncombe Hill 7-14-2018.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

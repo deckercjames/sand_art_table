@@ -13,7 +13,7 @@
 ;    Name: AcklingDykeDorset 6-4-2018.thr
 ;    From file:: AcklingDykeDorset 6-4-2018.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

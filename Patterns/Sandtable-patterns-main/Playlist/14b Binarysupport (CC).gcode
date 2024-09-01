@@ -13,7 +13,7 @@
 ;    Name: BinarySupport.thr
 ;    From file:: BinarySupport.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

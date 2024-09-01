@@ -13,7 +13,7 @@
 ;    Name: BattlesburyCampWilts 7-5-2017.thr
 ;    From file:: BattlesburyCampWilts 7-5-2017.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: Circular+Labyrinth+7+circuit.thr
 ;    From file:: Circular+Labyrinth+7+circuit.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: Happy Birthday Jess (BJ).gcode
 ;    From file:: Happy Birthday Jess (BJ).gcode
 ;    Aspect Ratio: true
-;    Comments: ;  Created by Sandify,;  https://sandify.org,;  Version: 0.2.6,;,;  Machine type: Rectangular,;    Min X (mm): 0,;    Max X (mm): 500,;    Min Y (mm): 0,;    Max Y (mm): 500,;  Content type: shape,;  Layer:,;    Shape: Point,;    Name: point,;    Visible: true,;    X offset: -250,;    Y offset: 75,;    Rotate (degrees): 0,;    Reverse path: false,;    Fine tuning:,;      Connect to next layer: along perimeter,;      Draw portion of path (%): 100,;      Backtrack at end (%): 0,;      Rotate starting point (%): 0,;  Layer:,;    Shape: Text,;    Name: fractal line writer leaves,;    Text: Happy 
+;    Comments: ;  Created by Sandify,;  https://sandify.org,;  Version: 0.2.6,;,;  Machine type: Rectangular,;    Min X (mm): 0,;    Max X (mm): 500,;    Min Y (mm): 0,;    Max Y (mm): 500,;  Content type: shape,;  Layer:,;    Shape: Point,;    Name: point,;    Visible: true,;    X offset: -250,;    Y offset: 75,;    Rotate (degrees): 0,;    Reverse path: false,;    Fine tuning:,;      Connect to next layer: along perimeter,;      Draw portion of path (%): 100,;      Backtrack at end (%): 0,;      Rotate starting point (%): 0,;  Layer:,;    Shape: Text,;    Name: fractal line writer leaves,;    Text: Happy
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: WiltonWindmill 5-22-2010.thr
 ;    From file:: WiltonWindmill 5-22-2010.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

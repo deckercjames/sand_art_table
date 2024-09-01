@@ -13,7 +13,7 @@
 ;    Name: BunchOfValentines.thr
 ;    From file:: BunchOfValentines.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

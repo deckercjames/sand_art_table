@@ -13,7 +13,7 @@
 ;    Name: LinedCircles.thr
 ;    From file:: LinedCircles.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

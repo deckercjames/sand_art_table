@@ -13,7 +13,7 @@
 ;    Name: BucklandDownDorset 5-26-2018.thr
 ;    From file:: BucklandDownDorset 5-26-2018.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

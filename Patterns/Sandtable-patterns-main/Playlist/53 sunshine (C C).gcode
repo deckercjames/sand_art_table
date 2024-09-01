@@ -13,7 +13,7 @@
 ;    Name: sunshine.thr
 ;    From file:: sunshine.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 12
 ;    Initial height: 12

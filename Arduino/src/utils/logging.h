@@ -22,6 +22,7 @@
 
 #define LOG_INIT(baud) \
     do { \
+        delay(200); \
         Serial.begin(baud); \
         Serial.println(F("\n\n**************************************")); \
     } while (0)

@@ -13,7 +13,7 @@
 ;    Name: PolarValentine.thr
 ;    From file:: PolarValentine.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

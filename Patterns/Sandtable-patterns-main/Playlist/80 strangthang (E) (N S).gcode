@@ -13,7 +13,7 @@
 ;    Name: dither_strangthang.thr
 ;    From file:: dither_strangthang.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

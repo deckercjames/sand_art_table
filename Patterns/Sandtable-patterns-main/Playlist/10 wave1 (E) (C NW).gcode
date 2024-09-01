@@ -13,7 +13,7 @@
 ;    Name: hero_13wave1.thr
 ;    From file:: hero_13wave1.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

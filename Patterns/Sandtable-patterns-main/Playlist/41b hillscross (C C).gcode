@@ -13,7 +13,7 @@
 ;    Name: HamptonHillsCross 2-18-2015.thr
 ;    From file:: HamptonHillsCross 2-18-2015.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

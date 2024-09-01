@@ -13,7 +13,7 @@
 ;    Name: griddy5.thr
 ;    From file:: griddy5.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

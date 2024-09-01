@@ -13,7 +13,7 @@
 ;    Name: SixPennyHandley 4-6-2009.thr
 ;    From file:: SixPennyHandley 4-6-2009.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: WinterbourneStokeDown 7-18-2018.thr
 ;    From file:: WinterbourneStokeDown 7-18-2018.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

@@ -13,7 +13,7 @@
 ;    Name: OareWiltshire 6-21-2010.thr
 ;    From file:: OareWiltshire 6-21-2010.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

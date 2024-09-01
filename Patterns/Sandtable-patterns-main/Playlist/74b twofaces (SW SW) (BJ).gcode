@@ -13,7 +13,7 @@
 ;    Name: twoface.thr
 ;    From file:: twoface.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

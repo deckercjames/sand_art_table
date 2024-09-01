@@ -13,7 +13,7 @@
 ;    Name: dither_sunburst.thr
 ;    From file:: dither_sunburst.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

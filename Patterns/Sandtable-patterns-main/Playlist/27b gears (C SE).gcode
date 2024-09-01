@@ -13,7 +13,7 @@
 ;    Name: dither_gears.thr
 ;    From file:: dither_gears.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

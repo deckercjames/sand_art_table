@@ -13,7 +13,7 @@
 ;    Name: SpiralBezier.thr
 ;    From file:: SpiralBezier.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

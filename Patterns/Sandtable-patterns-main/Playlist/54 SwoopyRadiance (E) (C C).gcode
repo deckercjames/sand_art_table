@@ -13,7 +13,7 @@
 ;    Name: SwoopyRadiance.thr
 ;    From file:: SwoopyRadiance.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

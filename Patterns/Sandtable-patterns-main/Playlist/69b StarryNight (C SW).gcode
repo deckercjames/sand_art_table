@@ -13,7 +13,7 @@
 ;    Name: StarryNight.thr
 ;    From file:: StarryNight.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

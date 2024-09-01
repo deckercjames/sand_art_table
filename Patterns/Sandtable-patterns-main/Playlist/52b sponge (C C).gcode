@@ -13,7 +13,7 @@
 ;    Name: Sponge.thr
 ;    From file:: Sponge.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

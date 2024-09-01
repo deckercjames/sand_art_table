@@ -13,7 +13,7 @@
 ;    Name: dither_yinyang.thr
 ;    From file:: dither_yinyang.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

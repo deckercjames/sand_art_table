@@ -13,7 +13,7 @@
 ;    Name: SquareErase.thr
 ;    From file:: SquareErase.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

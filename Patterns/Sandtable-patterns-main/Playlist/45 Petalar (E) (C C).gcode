@@ -13,7 +13,7 @@
 ;    Name: Petalar.thr
 ;    From file:: Petalar.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

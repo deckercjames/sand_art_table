@@ -13,7 +13,7 @@
 ;    Name: Butterfly.thr
 ;    From file:: Butterfly.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10

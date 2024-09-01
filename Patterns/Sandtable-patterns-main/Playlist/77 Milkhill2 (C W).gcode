@@ -13,7 +13,7 @@
 ;    Name: MilkHill 7-8-2011.thr
 ;    From file:: MilkHill 7-8-2011.thr
 ;    Aspect Ratio: true
-;    Comments: 
+;    Comments:
 ;    Visible: true
 ;    Initial width: 10
 ;    Initial height: 10
