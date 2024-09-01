@@ -43,7 +43,7 @@ void parse_gcode_line(const char *instr_buf, gcode_instruction_t *new_target)
     int current_arg_val_idx = 0;
 
     enum gcode_parse_state state = GCODE_STATE_PENDING_CMD;
-    
+
     while (1)
     {
         c = instr_buf[idx];
@@ -51,7 +51,7 @@ void parse_gcode_line(const char *instr_buf, gcode_instruction_t *new_target)
             process_pending_arg(current_arg_val, current_arg_val_idx, &current_arg_id, new_target);
             break;
         }
-        
+
         switch (state)
         {
             case GCODE_STATE_PENDING_CMD:
@@ -114,7 +114,7 @@ void parse_gcode_line(const char *instr_buf, gcode_instruction_t *new_target)
                 state = GCODE_STATE_PENDING_ARG;
                 break;
         }
-        
+
         if (c == '\0') {
             break;
         }

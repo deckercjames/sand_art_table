@@ -19,14 +19,14 @@ unsigned long last_update_time_ms;
 void setup()
 {
     LOG_INIT(SERIAL_BAUD);
-    
+
     strip.begin();
     strip.show();
 
     current_patern_idx = 0;
     anchor_led = 0;
     last_update_time_ms = 0;
-    
+
     init_pattern_helpers();
 
     log_info("Lighting initilized");
@@ -58,7 +58,7 @@ void loop()
     int brightness_val = analogRead(LED_BIGHTNESS_PIN);
     int speed_val      = analogRead(LED_SPEED_PIN);
     int pattern_val    = analogRead(LED_PATTERN_PIN);
-    
+
     if (INVERT_BRIGHTNESS_POT) { brightness_val = POT_MAX_VAL - brightness_val; }
     if (INVERT_SPEED_POT)      { speed_val      = POT_MAX_VAL - speed_val;      }
     if (INVERT_PATTERN_POT)    { pattern_val    = POT_MAX_VAL - pattern_val;    }
@@ -74,7 +74,7 @@ void loop()
         anchor_led -= LED_COUNT;
     }
     last_update_time_ms = millis();
-    
+
     // Select Pattern
     for (int i = 0; pattern_table[i].upper_range; i++) {
         int lower_bound, upper_bound;
@@ -84,7 +84,7 @@ void loop()
             break;
         }
     }
-    
+
     // Calculate intra-pattern value
     int lower_bound, upper_bound;
     get_pattern_bounds(current_patern_idx, &lower_bound, &upper_bound);
@@ -102,7 +102,7 @@ void loop()
         int led_idx = (i + ((int) anchor_led)) % LED_COUNT;
         strip.setPixelColor(led_idx, pixel_color);
     }
-    
+
     strip.show();
 }
 

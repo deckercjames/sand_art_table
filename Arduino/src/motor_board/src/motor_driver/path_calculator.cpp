@@ -39,7 +39,7 @@ void path_calculator_set_target_pos_steps(uint16_t target_x, uint16_t target_y)
 {
     target_pos_x = min(target_x, TABLE_SIZE_X_STEPS);
     target_pos_y = min(target_y, TABLE_SIZE_Y_STEPS);
-    
+
     // set x variables
     if (target_pos_x > *current_pos_x_ptr) {
         delta_x = target_pos_x - *current_pos_x_ptr;
@@ -48,7 +48,7 @@ void path_calculator_set_target_pos_steps(uint16_t target_x, uint16_t target_y)
         delta_x = *current_pos_x_ptr - target_pos_x;
         sign_delta_x = -1;
     }
-    
+
     // set y variables
     if (target_pos_y > *current_pos_y_ptr) {
         delta_y = target_pos_y - *current_pos_y_ptr;
@@ -58,7 +58,7 @@ void path_calculator_set_target_pos_steps(uint16_t target_x, uint16_t target_y)
         sign_delta_y = -1;
     }
     delta_y = -delta_y;
-    
+
     error = delta_x + delta_y;
 }
 
@@ -92,12 +92,12 @@ uint8_t path_calculator_get_motor_movement_instruction()
     if (path_calculator_at_target()) {
         return MOVE_NONE;
     }
-    
+
     int error_double = 2 * error;
-    
+
     int step_x = 0;
     int step_y = 0;
-    
+
     if (error_double >= delta_y) {
         if (*current_pos_x_ptr == target_pos_x) {
             return MOVE_NONE;
@@ -105,7 +105,7 @@ uint8_t path_calculator_get_motor_movement_instruction()
         error += delta_y;
         step_x = sign_delta_x;
     }
-    
+
     if (error_double <= delta_x) {
         if (*current_pos_y_ptr == target_pos_y) {
             return MOVE_NONE;

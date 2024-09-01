@@ -31,7 +31,7 @@ void init_button_group()
     for (int i = 0; i < sizeof(button_list); i++) {
         pinMode(button_list[i], INPUT_PULLUP);
     }
-    
+
     button_group_state = BUTTON_GROUP_STATE_IDLE;
 }
 

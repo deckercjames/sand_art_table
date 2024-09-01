@@ -209,7 +209,7 @@ unit_test_t test_list[] = {
     {"test_move_diag_down_left         ", test_move_diag_down_left},
     {"test_move_diag_up_left           ", test_move_diag_up_left},
     {"test_move_twice                  ", test_move_twice},
-    
+
     {"test_gcode_basic                 ", test_gcode_basic},
     {"test_gcode_args_reversed         ", test_gcode_args_reversed},
     {"test_gcode_basic_presision       ", test_gcode_basic_presision},
@@ -239,7 +239,7 @@ unit_test_t test_list[] = {
     {"test_gcode_y_too_large           ", test_gcode_y_too_large},
     {"test_gcode_leading_spaces        ", test_gcode_leading_spaces},
     {"test_gcode_multiple_spaces       ", test_gcode_multiple_spaces},
-    
+
     {"test_gcode_and_move              ", test_gcode_and_move},
     {nullptr, nullptr}
 };

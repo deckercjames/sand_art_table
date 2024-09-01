@@ -60,16 +60,16 @@ static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int tar
         registration_state = next_state;
         return true;
     }
-    
+
     if (regestration_steps_taken > max_registration_steps) {
         log_debug_value("Max steps", max_registration_steps);
         log_error("Max registration steps reached");
         registration_state = REGISTRATION_STATE_HALT;
         return false;
     }
-    
+
     regestration_steps_taken++;
-    
+
     *movement = direction;
     return true;
 }
@@ -80,7 +80,7 @@ static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int tar
 bool service_register_carriage(move_instr_t *movement)
 {
     *movement = 0;
-    
+
     switch(registration_state)
     {
         case REGISTRATION_STATE_START:
@@ -161,6 +161,6 @@ bool service_register_carriage(move_instr_t *movement)
         default:
             return false;
     }
-    
+
     return true;
 }

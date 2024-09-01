@@ -27,7 +27,7 @@
    ({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
      _a < _b ? _a : _b; })
-     
+
 
 typedef struct location_msg {
     uint16_t x_location_steps;

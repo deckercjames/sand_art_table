@@ -132,7 +132,7 @@ bool test_gcode_trailing_separated_comment()
 
 bool test_gcode_g_comment()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -144,7 +144,7 @@ bool test_gcode_g_comment()
 
 bool test_gcode_g0_comment()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -156,7 +156,7 @@ bool test_gcode_g0_comment()
 
 bool test_gcode_g01_comment()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -168,7 +168,7 @@ bool test_gcode_g01_comment()
 
 bool test_gcode_all_comment()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -180,7 +180,7 @@ bool test_gcode_all_comment()
 
 bool test_gcode_empty_line()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -192,7 +192,7 @@ bool test_gcode_empty_line()
 
 bool test_gcode_ginstruction_only()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -204,7 +204,7 @@ bool test_gcode_ginstruction_only()
 
 bool test_gcode_g_only()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -216,7 +216,7 @@ bool test_gcode_g_only()
 
 bool test_gcode_g0_only()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -228,7 +228,7 @@ bool test_gcode_g0_only()
 
 bool test_gcode_invalid()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -240,7 +240,7 @@ bool test_gcode_invalid()
 
 bool test_gcode_non_g1_command()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -272,7 +272,7 @@ bool test_gcode_extra_arg_middle()
 
 bool test_gcode_x_arg_only()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -284,7 +284,7 @@ bool test_gcode_x_arg_only()
 
 bool test_gcode_y_arg_only()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -314,7 +314,7 @@ bool test_gcode_neg_y()
 
 bool test_gcode_overflow_x()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -327,7 +327,7 @@ bool test_gcode_overflow_x()
 
 bool test_gcode_overflow_y()
 {
-    gcode_instruction_t result = { 
+    gcode_instruction_t result = {
         .x_location_100um = 100,
         .y_location_100um = 200,
     };
@@ -390,7 +390,7 @@ unit_test_t test_list[] = {
     TEST_CASE(test_gcode_overflow_y),
     TEST_CASE(test_gcode_leading_spaces),
     TEST_CASE(test_gcode_multiple_spaces),
-    
+
     {nullptr, nullptr}
 };
 

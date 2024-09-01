@@ -52,17 +52,17 @@ void wire_request_provide_next_pos()
 void setup()
 {
     LOG_INIT(SERIAL_BAUD);
-  
+
     // Setup pin to indicate a new instruction is ready
     pinMode(INSTRUCTION_READY_PIN_OUT, OUTPUT);
     digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
-    
+
     pinMode(SIG_INT_PIN_OUT, OUTPUT);
     digitalWrite(SIG_INT_PIN_OUT, LOW);
 
     // Clear next instruction
     memset(&next_location, 0, sizeof(location_msg_t));
-    
+
     sd_state = SD_STATE_IDLE;
 
     // Setup SD card
@@ -71,10 +71,10 @@ void setup()
         HALT;
     }
     log_info("SD Card Initilized");
-    
+
     // Init buttons
     init_button_group();
-    
+
     // Setup I2C last so we can not receive premature requests
     Wire.begin(SD_CARD_BOARD_I2C_ADDR);
     Wire.onRequest(wire_request_provide_next_pos);
@@ -83,7 +83,7 @@ void setup()
 void loop()
 {
     int button_pressed = check_button_pressed();
-    
+
     if (button_pressed) {
         log_info("main: button pressed");
         if (!file_completed()) {
@@ -94,7 +94,7 @@ void loop()
         open_file_idx(button_pressed);
         sd_state = SD_STATE_LOAD_FIRST_INSTR;
     }
-    
+
     switch(sd_state)
     {
         case SD_STATE_IDLE:

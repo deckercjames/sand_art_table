@@ -57,7 +57,7 @@ void get_next_line(char *buf, unsigned int buf_size)
         buf[0] = 0;
         return;
     }
-    
+
     while (1)
     {
         // Save room for a null terminator
@@ -66,24 +66,24 @@ void get_next_line(char *buf, unsigned int buf_size)
         }
 
         int val = current_file.read();
-        
+
         // log_debug_value("reading value", val);
-        
+
         if (val == -1) {
             break;
         }
-        
+
         char c = (char) val;
-        
+
         if (c == '\n') {
             break;
         }
-        
+
         buf[i] = c;
-        
+
         i++;
     }
-    
+
     log_debug("buffer read complete");
     buf[i] = 0;
 }

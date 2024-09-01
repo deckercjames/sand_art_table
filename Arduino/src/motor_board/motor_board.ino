@@ -18,9 +18,9 @@ void setup()
     LOG_INIT(SERIAL_BAUD);
 
     Wire.begin();
-    
+
     init_heat_manager();
-    
+
     init_toggle_switch();
 
     if (!init_motors()) {
@@ -37,16 +37,16 @@ static void _get_next_position_from_wire()
 {
     location_msg_t location;
     uint8_t *received_buffer = (uint8_t *) &location;
-    
+
     int index = 0;
 
     log_debug("Requesting next position from wire");
-    
+
     location.x_location_steps = 0;
     location.y_location_steps = 0;
-    
+
     Wire.requestFrom(SD_CARD_BOARD_I2C_ADDR, 4);
-    
+
     while (Wire.available()) { // peripheral may send less than requested
         char c = Wire.read();
         // Discard any extra bytes
@@ -56,7 +56,7 @@ static void _get_next_position_from_wire()
         received_buffer[index] = (uint8_t) c;
         index++;
     }
-    
+
     if (index < sizeof(location_msg_t)) {
         log_error("Received too few bytes");
     }
@@ -74,7 +74,7 @@ void loop()
     //     log_fatal("Motors have overheated. Halting");
     //     HALT;
     // }
-    
+
     toggle_switch_position_t toggle_pos = check_toggle_switch();
     if (toggle_pos == TOGGLE_POSITION_OFF) {
         return;
@@ -95,6 +95,6 @@ void loop()
         get_next_dest_point(&location);
         set_target_pos_steps(&location);
     }
-    
+
     service_motors();
 }
