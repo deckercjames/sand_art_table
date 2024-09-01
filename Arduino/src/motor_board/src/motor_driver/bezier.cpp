@@ -52,6 +52,7 @@ static void randomize_segment_ending()
 
 void start_bezier_path()
 {
+    log_info("Starting bezier path");
     p0.x = *current_pos_x_ptr;
     p0.y = *current_pos_y_ptr;
 
@@ -81,6 +82,12 @@ void get_next_dest_point(location_msg_t *location)
     t += BEZIER_DELTA_T;
 
     if (t >= 0.999f) {
+        log_info("Going to last control point of segment");
+        delay(1000);
+        log_debug_value("Cur pos [x steps]", *current_pos_x_ptr);
+        log_debug_value("Cur pos [y steps]", *current_pos_y_ptr);
+        log_debug_value("Last ctrl pt [x steps]", p3.x);
+        log_debug_value("Last ctrl pt [y steps]", p3.y);
         location->x_location_steps = p3.x;
         location->y_location_steps = p3.y;
         return;
@@ -96,5 +103,7 @@ void get_next_dest_point(location_msg_t *location)
 
     location->x_location_steps = (uint16_t) x;
     location->y_location_steps = (uint16_t) y;
+    
+    log_debug_value("Bezeir t", t);
 }
 

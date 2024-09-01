@@ -90,7 +90,7 @@ void loop()
             log_info("Motors are ready for next instruction");
             _get_next_position_from_wire();
         }
-    } else if (ready_for_next_instr()) {
+    } else if (is_in_bezier_mode() && ready_for_next_instr()) {
         location_msg_t location;
         get_next_dest_point(&location);
         set_target_pos_steps(&location);

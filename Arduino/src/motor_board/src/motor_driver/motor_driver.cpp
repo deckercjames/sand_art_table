@@ -45,6 +45,7 @@ bool init_motors()
 
     init_registration();
     init_path_calculator(&current_pos_x_steps, &current_pos_y_steps);
+    init_bezier(&current_pos_x_steps, &current_pos_y_steps);
 
     return true;
 }
@@ -130,6 +131,7 @@ void service_motors()
             break;
         }
         case MOTOR_STATE_DRAWING_IMAGE:
+        case MOTOR_STATE_DRAWING_BEZIER:
         {
             if (path_calculator_at_target()) {
                 break;
@@ -144,8 +146,6 @@ void service_motors()
             _make_movement(move, true);
             break;
         }
-        case MOTOR_STATE_DRAWING_BEZIER:
-            break;
         case MOTOR_STATE_HALT:
         case MOTOR_STATE_THERMO_THROTTLE:
             break;
@@ -174,8 +174,8 @@ void set_target_pos_steps(const location_msg_t *target_location)
     uint16_t clamped_x = min(target_location->x_location_steps, MM_TO_STEPS(TABLE_DIM_X_MM));
     uint16_t clamped_y = min(target_location->y_location_steps, MM_TO_STEPS(TABLE_DIM_Y_MM));
 
-    log_debug_value("Setting clamped position [x steps]", clamped_x);
-    log_debug_value("Setting clamped position [y steps]", clamped_y);
+    // log_debug_value("Setting clamped position [x steps]", clamped_x);
+    // log_debug_value("Setting clamped position [y steps]", clamped_y);
 
     path_calculator_set_target_pos_steps(
         clamped_x,
@@ -186,6 +186,11 @@ void set_target_pos_steps(const location_msg_t *target_location)
 bool is_in_image_mode()
 {
     return motor_state == MOTOR_STATE_DRAWING_IMAGE;
+}
+
+bool is_in_bezier_mode()
+{
+    return motor_state == MOTOR_STATE_DRAWING_BEZIER;
 }
 
 bool ready_for_next_instr()

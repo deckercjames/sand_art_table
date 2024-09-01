@@ -16,6 +16,7 @@ void release_motors();
 void set_drawing_type(drawing_type_t type);
 
 bool is_in_image_mode();
+bool is_in_bezier_mode();
 bool ready_for_next_instr();
 
 void set_target_pos_steps(const location_msg_t *target_location);
