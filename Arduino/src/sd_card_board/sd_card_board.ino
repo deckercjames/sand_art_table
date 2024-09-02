@@ -86,11 +86,9 @@ void loop()
 
     if (button_pressed) {
         log_info("main: button pressed");
-        if (!file_completed()) {
-            close_current_file();
-            digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
-            digitalWrite(SIG_INT_PIN_OUT, HIGH);
-        }
+        close_current_file();
+        digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
+        digitalWrite(SIG_INT_PIN_OUT, HIGH);
         open_file_idx(button_pressed);
         sd_state = SD_STATE_LOAD_FIRST_INSTR;
     }
