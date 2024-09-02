@@ -45,22 +45,12 @@ void setup()
     log_info("Initialization Complete");
 }
 
-static void _attempt_get_position_from_wire()
-{
-    if (digitalRead(INSTRUCTION_READY_PIN_IN) != INSTRUCTION_READY) {
-        return;
-    }
-    
-    location_msg_t location;
-    get_next_position_from_wire(&location);
-    set_target_pos_steps(location.x_location_steps, location.y_location_steps);
-}
-
 void loop()
 {
     // manage_heat();
     // if (!motors_operable()) {
     //     log_fatal("Motors have overheated. Halting");
+    //     release_motors();
     //     HALT;
     // }
     
@@ -104,16 +94,24 @@ void loop()
                 break;
             }
 
+            bool get_pos_from_wire = false;
             if (digitalRead(SIG_INT_PIN_IN))
             {
                 log_info("Interupt signal received");
-                _attempt_get_position_from_wire();
+                get_pos_from_wire = true;
             }
             else if (path_calculator_at_target())
             {
-                log_info("Motors are ready for next instruction");
-                _attempt_get_position_from_wire();
-                
+                get_pos_from_wire = true;
+            }
+            
+            if (get_pos_from_wire) {
+                if (digitalRead(INSTRUCTION_READY_PIN_IN) != INSTRUCTION_READY) {
+                    break;
+                }
+                location_msg_t location;
+                get_next_position_from_wire(&location);
+                set_target_pos_steps(location.x_location_steps, location.y_location_steps);
             }
             
             move_instr_t movement = path_calculator_get_motor_movement_instruction();

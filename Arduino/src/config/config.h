@@ -18,7 +18,7 @@
 #define TABLE_DIM_Y_MM 550
 
 #define SAND_BOX_OFFSET_X_MM 6
-#define SAND_BOX_OFFSET_Y_MM 25
+#define SAND_BOX_OFFSET_Y_MM 20
 
 #define STEPS_PER_MM 10
 #define STEPS_PER_100UM 1

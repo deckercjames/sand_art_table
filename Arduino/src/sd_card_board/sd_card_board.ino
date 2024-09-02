@@ -29,8 +29,6 @@ unsigned long instr_ready_time_millis;
 
 volatile gcode_instruction_t next_location;
 
-#define HALT do {} while(1)
-
 void wire_request_provide_next_pos()
 {
     log_info("Received wire request for instruction");

@@ -13,7 +13,8 @@ bool fans_on;
 bool init_heat_manager()
 {
     pinMode(FANS_PIN, OUTPUT);
-    fans_on = false;
+    fans_on = true;
+    digitalWrite(FANS_PIN, HIGH);
 }
 
 void manage_heat()
@@ -35,14 +36,14 @@ void manage_heat()
     log_debug_value("Current temerature (deg. F)", temp_f);
 
     if (temp_f < FANS_OFF_THRESHOLD_F && fans_on) {
-        log_info("Turning fans ON");
+        log_info("Turning fans OFF");
         digitalWrite(FANS_PIN, LOW);
         fans_on = false;
         return;
     }
 
     if (temp_f > FANS_ON_THRESHOLD_F && !fans_on) {
-        log_info("Turning fans OFF");
+        log_info("Turning fans ON");
         digitalWrite(FANS_PIN, HIGH);
         fans_on = true;
         return;

@@ -7,10 +7,10 @@
 #define LINE_BUFFER_SIZE 128
 
 // Button Inputs
-#define INPUT_BUTTON_1_PIN 9
-#define INPUT_BUTTON_2_PIN 6
-#define INPUT_BUTTON_3_PIN 7
-#define INPUT_BUTTON_4_PIN 8
+#define INPUT_BUTTON_1_PIN 6
+#define INPUT_BUTTON_2_PIN 9
+#define INPUT_BUTTON_3_PIN 8
+#define INPUT_BUTTON_4_PIN 7
 
 // Timing
 #define FIRST_INSTR_TIMEOUT_MILLIS 500

@@ -21,21 +21,21 @@
 #define MOTOR_REGISTER_EXTRA_DIST_MM 50
 
 // Temperature
-#define THERMOMETER_ANALOG_IN_PIN A3
-#define MOTOR_OPERATING_TEMP_F 95
+#define THERMOMETER_ANALOG_IN_PIN A2
+#define MOTOR_OPERATING_TEMP_F 120
 
 // Communication Input Pin
 #define INSTRUCTION_READY_PIN_IN 2
 #define SIG_INT_PIN_IN A1
 
 // Cooling Fans
-#define FANS_PIN 5
-#define FANS_OFF_THRESHOLD_F 72
-#define FANS_ON_THRESHOLD_F 85
+#define FANS_PIN A3
+#define FANS_OFF_THRESHOLD_F 75
+#define FANS_ON_THRESHOLD_F 90
 
 // Toggle Switch
-#define TOGGLE_UP_IN_PIN 11
-#define TOGGLE_DOWN_IN_PIN 12
+#define TOGGLE_UP_IN_PIN 12
+#define TOGGLE_DOWN_IN_PIN 11
 
 typedef enum toggle_switch_position {
     TOGGLE_POSITION_OFF,
