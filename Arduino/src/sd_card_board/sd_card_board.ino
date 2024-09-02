@@ -55,10 +55,7 @@ void setup()
 
     // Setup pin to indicate a new instruction is ready
     pinMode(INSTRUCTION_READY_PIN_OUT, OUTPUT);
-    digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
-
     pinMode(SIG_INT_PIN_OUT, OUTPUT);
-    digitalWrite(SIG_INT_PIN_OUT, LOW);
 
     // Clear next instruction
     memset(&next_location, 0, sizeof(location_msg_t));
@@ -130,6 +127,7 @@ void loop()
                 log_debug_value("Intr ready time", instr_ready_time_millis);
                 log_debug_value("Current time", millis());
                 digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
+                digitalWrite(SIG_INT_PIN_OUT, LOW);
                 sd_state = SD_STATE_CLOSE_FILE;
             }
             break;
