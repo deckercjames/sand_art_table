@@ -6,6 +6,6 @@
 
 void init_toggle_switch();
 
-bool check_toggle_switch(toggle_switch_position_t *ret_position);
+toggle_switch_position_t check_toggle_switch();
 
 #endif // TOGGLE_SWITCH__

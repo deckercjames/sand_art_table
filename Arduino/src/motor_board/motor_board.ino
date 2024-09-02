@@ -13,8 +13,6 @@
 #include "src/graphing/bezier.h"
 #include "src/graphing/path_calculator.h"
 
-#define HALT do { release_motors(); while(1); } while(0)
-
 typedef enum {
     MOTOR_STATE_IDLE,
     MOTOR_STATE_REGISTER_CARRIAGE,
@@ -38,12 +36,13 @@ void setup()
     init_toggle_switch();
 
     init_motors();
-    log_info("Motors Initilized");
 
     pinMode(INSTRUCTION_READY_PIN_IN, INPUT);
     pinMode(SIG_INT_PIN_IN, INPUT);
     
     motor_state = MOTOR_STATE_REGISTER_CARRIAGE;
+
+    log_info("Initialization Complete");
 }
 
 static void _attempt_get_position_from_wire()
@@ -57,34 +56,6 @@ static void _attempt_get_position_from_wire()
     set_target_pos_steps(location.x_location_steps, location.y_location_steps);
 }
 
-static bool _set_state_based_on_toggle_pos(toggle_switch_position_t toggle_pos)
-{
-    switch (toggle_pos)
-    {
-        case TOGGLE_POSITION_OFF:
-            motor_state = MOTOR_STATE_IDLE;
-            break;
-        case TOGGLE_POSITION_UP:
-            motor_state = MOTOR_STATE_START_BEZIER;
-            break;
-        case TOGGLE_POSITION_DOWN:
-            motor_state = MOTOR_STATE_START_IMAGE;
-            break;
-    }
-}
-
-static bool _process_toggle_input()
-{
-    toggle_switch_position_t toggle_pos;
-    bool toggle_pos_changed = check_toggle_switch(&toggle_pos);
-    if (!toggle_pos_changed) {
-        return false;
-    }
-    
-    _set_state_based_on_toggle_pos(toggle_pos);
-    return true;
-}
-
 void loop()
 {
     // manage_heat();
@@ -92,20 +63,23 @@ void loop()
     //     log_fatal("Motors have overheated. Halting");
     //     HALT;
     // }
+    
+    // Check toggle switch
+    toggle_switch_position_t toggle_pos = check_toggle_switch();
+    if (toggle_pos == TOGGLE_POSITION_OFF) {
+        return;
+    }
 
+    // Main state machine
     switch (motor_state)
     {
         case MOTOR_STATE_REGISTER_CARRIAGE:
         {
-            toggle_switch_position_t toggle_pos;
-            check_toggle_switch(&toggle_pos);
-            if (toggle_pos == TOGGLE_POSITION_OFF) {
-                break;
-            }
             if (registration_complete()) {
                 log_info("Registration complete");
-                randomSeed(micros());
-                motor_state = MOTOR_STATE_IDLE;
+                randomSeed(micros() >> 2);
+                // If the toggle switch is actually in bezier mode, the state will just switch immediatly next iteration
+                motor_state = MOTOR_STATE_START_IMAGE;
                 break;
             }
             move_instr_t movement;
@@ -118,13 +92,6 @@ void loop()
             service_motors(movement);
             break;
         }
-        case MOTOR_STATE_IDLE:
-        {
-            toggle_switch_position_t toggle_pos;
-            check_toggle_switch(&toggle_pos);
-            _set_state_based_on_toggle_pos(toggle_pos);
-            break;
-        }
         case MOTOR_STATE_START_IMAGE:
             // reset the path, so it immediately reads as ready for the next instruction
             path_calculator_reset_target();
@@ -132,7 +99,8 @@ void loop()
             // FALLTHROUGH
         case MOTOR_STATE_DRAWING_IMAGE:
         {
-            if (_process_toggle_input()) {
+            if (toggle_pos == TOGGLE_POSITION_UP) {
+                motor_state = MOTOR_STATE_START_BEZIER;
                 break;
             }
 
@@ -160,7 +128,8 @@ void loop()
             // FALLTHROUGH
         case MOTOR_STATE_DRAWING_BEZIER:
         {
-            if (_process_toggle_input()) {
+            if (toggle_pos == TOGGLE_POSITION_DOWN) {
+                motor_state = MOTOR_STATE_START_IMAGE;
                 break;
             }
 

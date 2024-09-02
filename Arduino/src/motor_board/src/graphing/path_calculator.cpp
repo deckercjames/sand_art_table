@@ -8,11 +8,6 @@
 #include "config.h"
 #include "logging.h"
 
-// Redefine the stepper motor directions for implementation
-// Don't include the arduino header so we can unit test easier
-#define FORWARD 1
-#define BACKWARD 2
-
 // Global Variables
 static uint16_t current_pos_x = 0; // measured in steps
 static uint16_t current_pos_y = 0;
