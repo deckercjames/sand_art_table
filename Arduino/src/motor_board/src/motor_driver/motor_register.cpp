@@ -21,7 +21,6 @@ typedef enum {
     REGISTRATION_STATE_X_POS,
     REGISTRATION_STATE_SANDBOX_OFFSET,
     REGISTRATION_COMPLETE,
-    REGISTRATION_STATE_HALT,
 } registration_state_t;
 
 registration_state_t registration_state;
@@ -63,7 +62,6 @@ static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int tar
     if (regestration_steps_taken > max_registration_steps) {
         log_debug_value("Max steps", max_registration_steps);
         log_error("Max registration steps reached");
-        registration_state = REGISTRATION_STATE_HALT;
         return false;
     }
 
@@ -156,7 +154,6 @@ bool service_register_carriage(move_instr_t *movement)
             break;
         case REGISTRATION_COMPLETE:
             break;
-        case REGISTRATION_STATE_HALT:
         default:
             return false;
     }
