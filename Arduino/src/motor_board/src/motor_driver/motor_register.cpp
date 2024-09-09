@@ -12,21 +12,68 @@
 #define REGISTRATION_EXTRA_DIST_MILLIS 200
 
 typedef enum {
-    REGISTRATION_STATE_START,
+    REGISTRATION_STATE_START = 0,
     REGISTRATION_STATE_Y_NEG,
-    REGISTRATION_STATE_Y_DELAY,
     REGISTRATION_STATE_Y_POS,
     REGISTRATION_STATE_X_NEG,
-    REGISTRATION_STATE_X_DELAY,
     REGISTRATION_STATE_X_POS,
-    REGISTRATION_STATE_SANDBOX_OFFSET,
     REGISTRATION_COMPLETE,
+    REGISTRATION_HALT,
 } registration_state_t;
 
 registration_state_t registration_state;
 
-unsigned long delay_until_millis;
-uint16_t regestration_steps_taken;
+typedef enum registration_intruction_signal {
+    REG_INSTR_SIG_IMMEDIATE,
+    REG_INSTR_SIG_LIMIT_SWITCH,
+    REG_INSTR_SIG_STEP_COUNT,
+} registration_intruction_signal_t;
+
+typedef struct registration_instruction {
+    registration_intruction_signal_t state_end_signal;
+    registration_state_t next_state;
+    move_instr_t move_instruction;
+    uint16_t max_steps;
+    int limit_switch_pin;
+    int switch_action;
+} registration_instruction_t;
+
+registration_instruction_t state_definitions[] = {
+    [REGISTRATION_STATE_START] = {
+        .state_end_signal = REG_INSTR_SIG_IMMEDIATE,
+        .next_state = REGISTRATION_STATE_Y_NEG,
+    },
+    [REGISTRATION_STATE_Y_NEG] = {
+        .state_end_signal = REG_INSTR_SIG_LIMIT_SWITCH,
+        .next_state = REGISTRATION_STATE_Y_POS,
+        .move_instruction = MOVE_INSTR_DOWN,
+        .max_steps = MM_TO_STEPS( TABLE_DIM_Y_MM + REGISTRATION_EXTRA_DIST_MILLIS ),
+        .limit_switch_pin = LIMIT_SWITCH_Y_PIN_INPUT,
+        .switch_action = LIMIT_SWITCH_DEPRESSED,
+    },
+    [REGISTRATION_STATE_Y_POS] = {
+        .state_end_signal = REG_INSTR_SIG_STEP_COUNT,
+        .next_state = REGISTRATION_STATE_X_NEG,
+        .move_instruction = MOVE_INSTR_UP,
+        .max_steps = MM_TO_STEPS( SAND_BOX_OFFSET_Y_MM ),
+    },
+    [REGISTRATION_STATE_X_NEG] = {
+        .state_end_signal = REG_INSTR_SIG_LIMIT_SWITCH,
+        .next_state = REGISTRATION_STATE_X_POS,
+        .move_instruction = MOVE_INSTR_LEFT,
+        .max_steps = MM_TO_STEPS( TABLE_DIM_X_MM + REGISTRATION_EXTRA_DIST_MILLIS ),
+        .limit_switch_pin = LIMIT_SWITCH_X_PIN_INPUT,
+        .switch_action = LIMIT_SWITCH_DEPRESSED,
+    },
+    [REGISTRATION_STATE_X_POS] = {
+        .state_end_signal = REG_INSTR_SIG_STEP_COUNT,
+        .next_state = REGISTRATION_COMPLETE,
+        .move_instruction = MOVE_INSTR_RIGHT,
+        .max_steps = MM_TO_STEPS( SAND_BOX_OFFSET_Y_MM ),
+    },
+};
+
+uint16_t steps_taken_in_state;
 
 void init_registration()
 {
@@ -35,6 +82,7 @@ void init_registration()
     pinMode(LIMIT_SWITCH_Y_PIN_INPUT, INPUT_PULLUP);
 
     registration_state = REGISTRATION_STATE_START;
+    steps_taken_in_state = 0;
 }
 
 bool registration_complete()
@@ -42,33 +90,10 @@ bool registration_complete()
     return registration_state == REGISTRATION_COMPLETE;
 }
 
-/**
- * @returns true on successful iteration; false otherwise (if motors should be halted)
-*/
-static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int target_switch_state, move_instr_t direction, registration_state_t next_state, uint16_t max_registration_steps)
+static void transition_to_next_state()
 {
-    if (digitalRead(limit_switch_pin) == target_switch_state) {
-        if (target_switch_state == LIMIT_SWITCH_DEPRESSED) {
-            log_debug("Limit switch pressed");
-        } else {
-            log_debug("Limit switch released. Axis registration complete");
-        }
-        delay_until_millis = millis() + DEBOUNCE_DELAY_MS;
-        regestration_steps_taken = 0;
-        registration_state = next_state;
-        return true;
-    }
-
-    if (regestration_steps_taken > max_registration_steps) {
-        log_debug_value("Max steps", max_registration_steps);
-        log_error("Max registration steps reached");
-        return false;
-    }
-
-    regestration_steps_taken++;
-
-    *movement = direction;
-    return true;
+    registration_state = state_definitions[registration_state].next_state;
+    steps_taken_in_state = 0;
 }
 
 /**
@@ -76,87 +101,42 @@ static bool _register_axis(move_instr_t *movement, int limit_switch_pin, int tar
 */
 bool service_register_carriage(move_instr_t *movement)
 {
-    *movement = 0;
-
-    switch(registration_state)
-    {
-        case REGISTRATION_STATE_START:
-            log_debug("Beginning to register carriage...");
-            registration_state = REGISTRATION_STATE_Y_NEG;
-            // FALLTHROUGH
-
-        case REGISTRATION_STATE_Y_NEG:
-            return _register_axis(
-                movement,
-                LIMIT_SWITCH_Y_PIN_INPUT,
-                LIMIT_SWITCH_DEPRESSED,
-                MOVE_INSTR_DOWN,
-                REGISTRATION_STATE_Y_DELAY,
-                MM_TO_STEPS( TABLE_DIM_Y_MM + REGISTRATION_EXTRA_DIST_MILLIS )
-            );
-        case REGISTRATION_STATE_Y_DELAY:
-            if (millis() < delay_until_millis) {
-                break;
-            }
-            registration_state = REGISTRATION_STATE_Y_POS;
-            log_debug("Debounce delay complete. Reversing driection.");
-            break;
-        case REGISTRATION_STATE_Y_POS:
-            return _register_axis(
-                movement,
-                LIMIT_SWITCH_Y_PIN_INPUT,
-                LIMIT_SWITCH_RELEASED,
-                MOVE_INSTR_UP,
-                REGISTRATION_STATE_X_NEG,
-                MM_TO_STEPS( REGISTRATION_EXTRA_DIST_MILLIS )
-            );
-
-        case REGISTRATION_STATE_X_NEG:
-            return _register_axis(
-                movement,
-                LIMIT_SWITCH_X_PIN_INPUT,
-                LIMIT_SWITCH_DEPRESSED,
-                MOVE_INSTR_LEFT,
-                REGISTRATION_STATE_X_DELAY,
-                MM_TO_STEPS( TABLE_DIM_X_MM + REGISTRATION_EXTRA_DIST_MILLIS )
-            );
-        case REGISTRATION_STATE_X_DELAY:
-            if (millis() < delay_until_millis) {
-                break;
-            }
-            registration_state = REGISTRATION_STATE_X_POS;
-            log_debug("Debounce delay complete. Reversing direction.");
-            break;
-        case REGISTRATION_STATE_X_POS:
-            return _register_axis(
-                movement,
-                LIMIT_SWITCH_X_PIN_INPUT,
-                LIMIT_SWITCH_RELEASED,
-                MOVE_INSTR_RIGHT,
-                REGISTRATION_STATE_SANDBOX_OFFSET,
-                MM_TO_STEPS( REGISTRATION_EXTRA_DIST_MILLIS )
-            );
-        case REGISTRATION_STATE_SANDBOX_OFFSET:
-            bool make_x_step = regestration_steps_taken < MM_TO_STEPS(SAND_BOX_OFFSET_X_MM);
-            bool make_y_step = regestration_steps_taken < MM_TO_STEPS(SAND_BOX_OFFSET_Y_MM);
-            regestration_steps_taken++;
-            if (make_x_step && make_y_step) {
-                *movement = MOVE_INSTR_UP_RIGHT;
-            } else if (make_x_step) {
-                *movement = MOVE_INSTR_RIGHT;
-            } else if (make_y_step) {
-                *movement = MOVE_INSTR_UP;
-            } else {
-                log_info("Offset to sand box accounted for");
-                registration_state = REGISTRATION_COMPLETE;
-                regestration_steps_taken = 0;
-            }
-            break;
-        case REGISTRATION_COMPLETE:
-            break;
-        default:
-            return false;
+    *movement = MOVE_INSTR_NONE;
+    
+    if (registration_state == REGISTRATION_COMPLETE) {
+        return true;
     }
+    
+    if (registration_state == REGISTRATION_HALT) {
+        return false;
+    }
+    
+    registration_instruction_t *reg_instr = &state_definitions[registration_state];
+
+    if (reg_instr->state_end_signal == REG_INSTR_SIG_IMMEDIATE) {
+        transition_to_next_state();
+        return true;
+    }
+    
+    if (steps_taken_in_state >= reg_instr->max_steps) {
+        if (reg_instr->state_end_signal == REG_INSTR_SIG_STEP_COUNT) {
+            log_fatal("Axis step based registration complete");
+            transition_to_next_state();
+        } else {
+            log_fatal("Reach unexpected max steps");
+            registration_state = REGISTRATION_HALT;
+        }
+        return true;
+    }
+    
+    if (digitalRead(reg_instr->limit_switch_pin) == reg_instr->switch_action) {
+        log_fatal("Axis switch based registration complete");
+        transition_to_next_state();
+        return true;
+    }
+    
+    *movement = reg_instr->move_instruction;
+    steps_taken_in_state++;
 
     return true;
 }
