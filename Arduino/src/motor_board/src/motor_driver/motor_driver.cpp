@@ -43,12 +43,12 @@ static const motor_commands_t move_instr_to_motor_cmds[] = {
     [MOVE_INSTR_NONE]       = { 0 },
     [MOVE_INSTR_UP]         = { MOTOR_SPEED_ORTH, COUNTER_CLOCKWISE, 1,  CLOCKWISE,         1  },
     [MOVE_INSTR_DOWN]       = { MOTOR_SPEED_ORTH, CLOCKWISE,         1,  COUNTER_CLOCKWISE, 1  },
-    [MOVE_INSTR_LEFT]       = { MOTOR_SPEED_ORTH, COUNTER_CLOCKWISE, 1,  COUNTER_CLOCKWISE, 1  },
-    [MOVE_INSTR_RIGHT]      = { MOTOR_SPEED_ORTH, CLOCKWISE,         1,  CLOCKWISE,         1  },
-    [MOVE_INSTR_UP_LEFT]    = { MOTOR_SPEED_DIAG, COUNTER_CLOCKWISE, 2,  NA,                NA },
-    [MOVE_INSTR_UP_RIGHT]   = { MOTOR_SPEED_DIAG, NA,                NA, CLOCKWISE,         2  },
-    [MOVE_INSTR_DOWN_LEFT]  = { MOTOR_SPEED_DIAG, NA,                NA, COUNTER_CLOCKWISE, 2  },
-    [MOVE_INSTR_DOWN_RIGHT] = { MOTOR_SPEED_DIAG, CLOCKWISE,         2,  NA,                NA },
+    [MOVE_INSTR_LEFT]       = { MOTOR_SPEED_ORTH, CLOCKWISE,         1,  CLOCKWISE,         1  },
+    [MOVE_INSTR_RIGHT]      = { MOTOR_SPEED_ORTH, COUNTER_CLOCKWISE, 1,  COUNTER_CLOCKWISE, 1  },
+    [MOVE_INSTR_UP_LEFT]    = { MOTOR_SPEED_DIAG, NA,                NA, CLOCKWISE,         2  },
+    [MOVE_INSTR_UP_RIGHT]   = { MOTOR_SPEED_DIAG, COUNTER_CLOCKWISE, 2,  NA,                NA },
+    [MOVE_INSTR_DOWN_LEFT]  = { MOTOR_SPEED_DIAG, CLOCKWISE,         2,  NA,                NA },
+    [MOVE_INSTR_DOWN_RIGHT] = { MOTOR_SPEED_DIAG, NA,                NA, COUNTER_CLOCKWISE, 2  },
 };
 
 static void service_motors(move_instr_t move)
