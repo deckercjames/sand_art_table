@@ -14,11 +14,11 @@
 #define POT_HYSTERESIS 5
 
 // Sand Table Size
-#define TABLE_DIM_X_MM 900
+#define TABLE_DIM_X_MM 880
 #define TABLE_DIM_Y_MM 550
 
 #define SAND_BOX_OFFSET_X_MM 6
-#define SAND_BOX_OFFSET_Y_MM 20
+#define SAND_BOX_OFFSET_Y_MM 18
 
 #define STEPS_PER_MM 10
 #define STEPS_PER_100UM 1
