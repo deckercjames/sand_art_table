@@ -9,31 +9,31 @@
 
 File current_file;
 
+int current_file_idx[4] = { 0 };
+
 bool init_sd_card()
 {
     return SD.begin(CARD_SELECT_PIN);
 }
 
-bool open_next_file()
+bool open_file_idx(int button_idx)
 {
-    current_file = SD.open("test.gcd");
-    if (!current_file) {
-        log_error("File opened Failed");
-        return false;
-    }
-    log_info("File successfully opened");
-    return true;
-}
-
-bool open_file_idx(int file_idx)
-{
-    char file_name[20] = "patterns/pat_0.gcd";
-    file_name[13] += file_idx;
+    char file_name[20] = "but_0/pat_0.txt";
+    file_name[4] += button_idx;
+    file_name[10] += current_file_idx[button_idx];
+    log_debug_value("Attempting to open file", file_name);
     current_file = SD.open(file_name);
     if (!current_file) {
+        if (current_file_idx[button_idx] > 0) {
+            log_info("Failed to open file. Resetting index");
+            current_file_idx[button_idx] = 0;
+            return open_file_idx(button_idx);
+        }
         log_error("File opened Failed");
         return false;
     }
+    current_file_idx[button_idx]++;
+    current_file_idx[button_idx] %= 10;
     log_debug_value("Opened file", file_name);
     return true;
 }

@@ -4,9 +4,7 @@
 
 bool init_sd_card();
 
-bool open_next_file();
-
-bool open_file_idx(int file_idx);
+bool open_file_idx(int button_idx);
 
 void close_current_file();
 

@@ -84,7 +84,7 @@ void loop()
         close_current_file();
         digitalWrite(INSTRUCTION_READY_PIN_OUT, INSTRUCTION_NOT_READY);
         digitalWrite(SIG_INT_PIN_OUT, HIGH);
-        open_file_idx(button_pressed);
+        open_file_idx(button_pressed - 1);
         sd_state = SD_STATE_LOAD_FIRST_INSTR;
     }
 
