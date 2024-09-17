@@ -58,6 +58,33 @@ def test_get_blobs_two():
     assert test_pixel_grid == test_pixel_grid_unchanged
 
 
+def test_get_two_blobs_adjacent():
+    test_pixel_grid = [
+        [1, 2],
+    ]
+    test_pixel_grid_unchanged = deepcopy(test_pixel_grid)
+    recv_blobs = get_blobs(test_pixel_grid)
+    expected_blobs = [
+        BlobTuple(
+            [
+                [True, False],
+            ],
+            [(0,0), (0,1), (1,1), (1,0)],
+            [],
+        ),
+        BlobTuple(
+            [
+                [False, True],
+            ],
+            [(0,1), (0,2), (1,2), (1,1)],
+            [],
+        ),
+    ]
+    assert len(recv_blobs) == len(expected_blobs)
+    assert recv_blobs == expected_blobs
+    assert test_pixel_grid == test_pixel_grid_unchanged
+
+
 def test_get_blobs_one_with_void():
     test_pixel_grid = [
         [1, 1, 1],
