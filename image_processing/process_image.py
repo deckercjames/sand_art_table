@@ -1,6 +1,7 @@
 
 import sys
 from enum import Enum
+from collections import namedtuple
 
 
 class MoveDir(Enum):
@@ -49,27 +50,99 @@ def check_pixel(pixel_grid, r, c):
         return 0
     return pixel_grid[r][c]
 
-def flood_clear_pixels(pixel_grid, r, c):
+
+def check_blob_mask_pixel(blob_mask, r, c):
+    if r < 0 or r >= len(blob_mask):
+        return False
+    if c < 0 or c >= len(blob_mask[r]):
+        return False
+    return blob_mask[r][c]
+
+
+def get_flood_fill_blob_mask(pixel_grid, r, c):
     pixel_stack = []
     pixel_stack.append((r, c))
     
-    clear_val = pixel_grid[r][c]
-    if clear_val == 0:
+    blob_color_index = pixel_grid[r][c]
+    if blob_color_index == 0:
         return pixel_grid
+    
+    blob_mask = [[False for _ in range(len(row))] for row in pixel_grid]
     
     while len(pixel_stack) > 0:
         r, c = pixel_stack.pop()
-        if check_pixel(pixel_grid, r, c) != clear_val:
+        if r < 0 or r >= len(pixel_grid) or c < 0 or c >= len(pixel_grid[0]):
             continue
+        # already visited
+        if blob_mask[r][c]:
+            continue
+        # check if pixel should be included
+        if check_pixel(pixel_grid, r, c) != blob_color_index:
+            continue
+        # expand pixel
         pixel_stack.append((r + 1, c))
         pixel_stack.append((r - 1, c))
         pixel_stack.append((r, c - 1))
         pixel_stack.append((r, c + 1))
-        pixel_grid[r][c] = 0
+        blob_mask[r][c] = True
     
-    return pixel_grid
+    return blob_mask
 
-def contour_blob(pixel_grid, r, c):
+
+def grid_mask_to_str(grid_mask):
+    buf = ""
+    buf += "+" + "-" * len(grid_mask[0]) + "+\n"
+    for row in grid_mask:
+        buf += "|"
+        for cell in row:
+            buf += "#" if cell else " "
+        buf += "|\n"
+    buf += "+" + "-" * len(grid_mask[0]) + "+\n"
+    return buf
+
+
+def get_total_blob_mask(contour, num_rows, num_cols):
+    
+    # break the contour list into a grid of horizontal and vertical boundaries ("fences")
+    hor_fences  = [[False for _ in range(num_cols)] for _ in range(num_rows + 1)]
+    vert_fences = [[False for _ in range(num_cols + 1)] for _ in range(num_rows)]
+    
+    # populate fence tables
+    for i, point in enumerate(contour):
+        r, c = point
+        prev_r, prev_c = get_list_element_cyclic(contour, i - 1)
+        if r == prev_r:
+            hor_fences[r][min(c, prev_c)] = True
+        elif c == prev_c:
+            vert_fences[min(r, prev_r)][c] = True
+        else:
+            raise Exception("Somethiing has gone horribally wrong")
+
+    # Flood fill total blob using fences as restrictions
+    
+    total_blob_mask = [[False for _ in range(num_cols)] for _ in range(num_rows)]
+    
+    pixel_stack = []
+    pixel_stack.append(contour[0])
+    
+    while len(pixel_stack) > 0:
+        r, c = pixel_stack.pop()
+        # already visited
+        if r < 0 or r >= num_rows or c < 0 or c >= num_cols:
+            continue
+        if total_blob_mask[r][c]:
+            continue
+        # expand pixel
+        if not hor_fences[r+1][c]:  pixel_stack.append((r + 1, c))
+        if not hor_fences[r][c]:    pixel_stack.append((r - 1, c))
+        if not vert_fences[r][c]:   pixel_stack.append((r, c - 1))
+        if not vert_fences[r][c+1]: pixel_stack.append((r, c + 1))
+        total_blob_mask[r][c] = True
+    
+    return total_blob_mask
+
+
+def get_blob_outer_contour(blob_mask, r, c):
     contour = []
     contour.append((r, c))
     
@@ -77,31 +150,35 @@ def contour_blob(pixel_grid, r, c):
     last_move_dir = MoveDir.EAST
     
     while True:
-        print("Iter Currnet Path {}, Last Move {}, Current pos {}".format(contour, last_move_dir.name, current_pos))
         if current_pos == (r, c):
             break
         for move_option in blob_contour_priority_dir_check[last_move_dir]:
-            print("  Checking move option "+str(move_option))
             if move_option[1] is None:
-                print("  Last Resort")
                 break
             check_location = (current_pos[0] + move_option[1][0], current_pos[1] + move_option[1][1])
-            print("  Checking pixel "+str(check_location))
-            if check_pixel(pixel_grid, check_location[0], check_location[1]) != 0:
-                print("    Got "+str(check_pixel(pixel_grid, check_location[0], check_location[1])))
+            if check_blob_mask_pixel(blob_mask, check_location[0], check_location[1]):
                 continue
-            print("    Dir good")
             break
         contour.append(current_pos)
         current_pos = move_direction(current_pos, move_option[0])
         last_move_dir = move_option[0]
         pass
     
-    pixel_grid = flood_clear_pixels(pixel_grid, r, c)
     return contour
 
 
-def contour_pixel_grid(pixel_grid):
+def grid_mask_subtraction(grid_mask, grid_mask_subtrahend):
+    if len(grid_mask) != len(grid_mask_subtrahend):
+        raise Exception("Can not subtract different sized masks")
+    if len(grid_mask[0]) != len(grid_mask_subtrahend[0]):
+        raise Exception("Can not subtract different sized masks")
+        
+    return [[(grid_mask[r][c] and not grid_mask_subtrahend[r][c]) for c in range(len(grid_mask[r]))] for r in range(len(grid_mask))]
+
+
+BlobTuple = namedtuple("Blob", ["mask", "outer_contour", "sub_blobs"])
+
+def get_blobs(pixel_grid, grid_mask=None):
     """
     Arguments:
         pixel_grid (2d list[int]): A grid of integers representing the color group of each pixel
@@ -109,37 +186,68 @@ def contour_pixel_grid(pixel_grid):
     Returns (list(list(int, int))):
         A list of bound loops for each destinct color group blob
     """
-    blob_contours = []
+    # No grid mask means the whole pixel grid is usable
+    if grid_mask is None:
+        grid_mask = [[True for _ in range(len(row))] for row in pixel_grid]
+    
+    blobs = []
+
     for r, row in enumerate(pixel_grid):
         for c, pixel in enumerate(row):
+            if not grid_mask[r][c]:
+                continue
             if pixel == 0:
                 continue
-            blob_contours.append(contour_blob(pixel_grid, r, c))
+            blob_mask = get_flood_fill_blob_mask(pixel_grid, r, c)
+            blob_outer_contour = get_blob_outer_contour(blob_mask, r, c)
+            total_blob_mask = get_total_blob_mask(blob_outer_contour, len(pixel_grid), len(pixel_grid[0]))
+            # subtract the total blob mas from the current mask
+            # we do not want to count this blob again and sub blobs will be found with the recursive call
+            grid_mask = grid_mask_subtraction(grid_mask, total_blob_mask)
+            sub_blob_mask = grid_mask_subtraction(total_blob_mask, blob_mask)
+            sub_blobs = get_blobs(pixel_grid, grid_mask=sub_blob_mask)
+            blob = BlobTuple(blob_mask, blob_outer_contour, sub_blobs)
+            blobs.append(blob)
             pass
-    return blob_contours
+    
+    return blobs
 
 
 def get_list_element_cyclic(list, i):
     return list[i % len(list)]
 
 
-def get_contour_insets(contour):
+def is_point_fully_inside(pixel_grid, r, c, val):
+    if check_pixel(pixel_grid, r,   c)   != val: return False
+    if check_pixel(pixel_grid, r-1, c)   != val: return False
+    if check_pixel(pixel_grid, r,   c-1) != val: return False
+    if check_pixel(pixel_grid, r-1, c-1) != val: return False
+    return True
+
+
+def get_contour_inset(pixel_grid, contour):
     
-    all_insets = []
-    all_insets.append(contour.copy())
+    start_r, start_c = contour[0]
+    fill_val = pixel_grid[start_r][start_c]
     
-    inset = contour.copy()
-    moved_mask = [True for _ in range(len(inset))]
+    # This is the point that the leader is "dragging" around the interior
+    follower = None
     
-    # all contour poinsts must be moved to make the inset
-    while not all(moved_mask):
-        inset_point_moved = False
-        for point in inset:
-            # if point is colinear with its neighbors, it can't be moved
-            pass
-        # if no points wer adjusted inward on this pass, then no further progress can be made, regardless if all points have been moved
-        if not inset_point_moved:
-            break
+    for i, point in enumerate(contour):
+        pr, pc = point
+        # check to see if we can pickup the follower
+        if follower is None:
+            # check if any of the orthoganal lattace points can be a follower
+            for dr, dc in [(1,0), (-1,0),  (0,-1), (0,1)]:
+                check_follower_r = pr + dr
+                check_follower_c = pc + dc
+                if is_point_fully_inside(pixel_grid, check_follower_r, check_follower_c, fill_val):
+                    follower = (check_follower_r, check_follower_c)
+                    break
+        # if there is no follower, continue walking until we get one
+        if follower is None:
+            continue
+        
     
     pass
 
