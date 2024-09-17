@@ -14,12 +14,17 @@ def test_get_blobs_basic():
     recv_blobs = get_blobs(test_pixel_grid)
     expected_blobs = [
         BlobTuple(
+            # Blob mask
             [
                 [False, False, False, False, False],
                 [False, False, True,  True,  False],
                 [False, False, False, False, False],
             ],
+            # Outer contour
             [(1,2), (1,3), (1,4), (2,4), (2,3), (2,2)],
+            # Void contours
+            [],
+            # Sub-blobs
             [],
         ),
     ]
@@ -37,19 +42,29 @@ def test_get_blobs_two():
     recv_blobs = get_blobs(test_pixel_grid)
     expected_blobs = [
         BlobTuple(
+            # Blob mask
             [
                 [False, True ],
                 [False, False],
             ],
+            # Outer contour
             [(0,1), (0,2), (1,2), (1,1)],
+            # Void contours
+            [],
+            # Sub-blobs
             [],
         ),
         BlobTuple(
+            # Blob mask
             [
                 [False, False],
                 [True,  False],
             ],
+            # Outer contour
             [(1,0), (1,1), (2,1), (2,0)],
+            # Void contours
+            [],
+            # Sub-blobs
             [],
         ),
     ]
@@ -66,17 +81,27 @@ def test_get_two_blobs_adjacent():
     recv_blobs = get_blobs(test_pixel_grid)
     expected_blobs = [
         BlobTuple(
+            # Blob mask
             [
                 [True, False],
             ],
+            # Outer contour
             [(0,0), (0,1), (1,1), (1,0)],
+            # Void contours
+            [],
+            # Sub-blobs
             [],
         ),
         BlobTuple(
+            # Blob mask
             [
                 [False, True],
             ],
+            # Outer contour
             [(0,1), (0,2), (1,2), (1,1)],
+            # Void contours
+            [],
+            # Sub-blobs
             [],
         ),
     ]
@@ -95,12 +120,19 @@ def test_get_blobs_one_with_void():
     recv_blobs = get_blobs(test_pixel_grid)
     expected_blobs = [
         BlobTuple(
+            # Blob mask
             [
                 [True,  True,  True],
                 [True,  False, True],
                 [True,  True,  True],
             ],
+            # Outer contour
             [(0,0), (0,1), (0,2), (0,3), (1,3), (2,3), (3,3), (3,2), (3,1), (3,0), (2,0), (1,0)],
+            # Void contours
+            [
+                [(1,1), (1,2), (2,2), (2,1)],
+            ],
+            # Sub-blobs
             [],
         ),
     ]
@@ -119,20 +151,32 @@ def test_get_blobs_nested():
     recv_blobs = get_blobs(test_pixel_grid)
     expected_blobs = [
         BlobTuple(
+            # Blob mask
             [
                 [True,  True,  True],
                 [True,  False, True],
                 [True,  True,  True],
             ],
+            # Outer contour
             [(0,0), (0,1), (0,2), (0,3), (1,3), (2,3), (3,3), (3,2), (3,1), (3,0), (2,0), (1,0)],
+            # Void contours
+            [
+                [(1,1), (1,2), (2,2), (2,1)],
+            ],
+            # Sub-blobs
             [
                 BlobTuple(
+                    # Blob mask
                     [
                         [False, False, False],
                         [False, True,  False],
                         [False, False, False],
                     ],
+                    # Outer contour
                     [(1,1), (1,2), (2,2), (2,1)],
+                    # Void contours
+                    [],
+                    # Sub-blobs
                     [],
                 ),
             ],

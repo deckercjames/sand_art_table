@@ -2,6 +2,7 @@
 import sys
 from enum import Enum
 from collections import namedtuple
+from copy import deepcopy
 
 
 class MoveDir(Enum):
@@ -167,6 +168,26 @@ def get_blob_outer_contour(blob_mask, r, c):
     return contour
 
 
+def get_all_mask_contours(grid_mask):
+    """
+    Gets all the contours of a grid mask with positive "blobs".
+    This can be used for getting the contours of a void within a blob
+    There can be no nested mask contours
+    """
+    contours = []
+    
+    for r, row in enumerate(grid_mask):
+        for c, cell in enumerate(row):
+            if not grid_mask[r][c]:
+                continue
+            grid_blob_mask = get_flood_fill_blob_mask(grid_mask, r, c)
+            grid_blob_contour = get_blob_outer_contour(grid_blob_mask, r, c)
+            grid_mask = grid_mask_subtraction(grid_mask, grid_blob_mask)
+            contours.append(grid_blob_contour)
+    
+    return contours
+
+
 def grid_mask_subtraction(grid_mask, grid_mask_subtrahend):
     if len(grid_mask) != len(grid_mask_subtrahend):
         raise Exception("Can not subtract different sized masks")
@@ -176,7 +197,7 @@ def grid_mask_subtraction(grid_mask, grid_mask_subtrahend):
     return [[(grid_mask[r][c] and not grid_mask_subtrahend[r][c]) for c in range(len(grid_mask[r]))] for r in range(len(grid_mask))]
 
 
-BlobTuple = namedtuple("Blob", ["mask", "outer_contour", "sub_blobs"])
+BlobTuple = namedtuple("Blob", ["mask", "outer_contour", "void_contours", "sub_blobs"])
 
 def get_blobs(pixel_grid, grid_mask=None):
     """
@@ -205,8 +226,9 @@ def get_blobs(pixel_grid, grid_mask=None):
             # we do not want to count this blob again and sub blobs will be found with the recursive call
             grid_mask = grid_mask_subtraction(grid_mask, total_blob_mask)
             sub_blob_mask = grid_mask_subtraction(total_blob_mask, blob_mask)
+            void_contours = get_all_mask_contours(sub_blob_mask)
             sub_blobs = get_blobs(pixel_grid, grid_mask=sub_blob_mask)
-            blob = BlobTuple(blob_mask, blob_outer_contour, sub_blobs)
+            blob = BlobTuple(blob_mask, blob_outer_contour, void_contours, sub_blobs)
             blobs.append(blob)
             pass
     
@@ -215,41 +237,6 @@ def get_blobs(pixel_grid, grid_mask=None):
 
 def get_list_element_cyclic(list, i):
     return list[i % len(list)]
-
-
-def is_point_fully_inside(pixel_grid, r, c, val):
-    if check_pixel(pixel_grid, r,   c)   != val: return False
-    if check_pixel(pixel_grid, r-1, c)   != val: return False
-    if check_pixel(pixel_grid, r,   c-1) != val: return False
-    if check_pixel(pixel_grid, r-1, c-1) != val: return False
-    return True
-
-
-def get_contour_inset(pixel_grid, contour):
-    
-    start_r, start_c = contour[0]
-    fill_val = pixel_grid[start_r][start_c]
-    
-    # This is the point that the leader is "dragging" around the interior
-    follower = None
-    
-    for i, point in enumerate(contour):
-        pr, pc = point
-        # check to see if we can pickup the follower
-        if follower is None:
-            # check if any of the orthoganal lattace points can be a follower
-            for dr, dc in [(1,0), (-1,0),  (0,-1), (0,1)]:
-                check_follower_r = pr + dr
-                check_follower_c = pc + dc
-                if is_point_fully_inside(pixel_grid, check_follower_r, check_follower_c, fill_val):
-                    follower = (check_follower_r, check_follower_c)
-                    break
-        # if there is no follower, continue walking until we get one
-        if follower is None:
-            continue
-        
-    
-    pass
 
 
 def main():
