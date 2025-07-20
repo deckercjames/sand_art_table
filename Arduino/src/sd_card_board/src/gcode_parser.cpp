@@ -23,7 +23,11 @@ static void process_pending_arg(char *arg_buf, int arg_buf_idx, char current_arg
         return;
     }
     arg_buf[arg_buf_idx] = '\0';
-    float mm = atof(arg_buf);
+    char *end_ptr_out = NULL;
+    float mm = strtof(arg_buf, &end_ptr_out);
+    if (*end_ptr_out) {
+        return;
+    }
     mm = max(mm, 0.0f);
     unsigned int val_100um = (unsigned int) (mm * 10);
     if (current_arg_id == 'X') {
@@ -31,7 +35,6 @@ static void process_pending_arg(char *arg_buf, int arg_buf_idx, char current_arg
     } else if (current_arg_id == 'Y') {
         new_target->y_location_100um = val_100um;
     }
-    current_arg_id = '\0';
 }
 
 void parse_gcode_line(const char *instr_buf, gcode_instruction_t *new_target)

@@ -58,6 +58,15 @@ bool test_gcode_subone_no_leading_zero()
     return true;
 }
 
+bool test_gcode_zero_padding()
+{
+    gcode_instruction_t result = { 0 };
+    parse_gcode_line("G1 X004.100 Y005.200", &result);
+    ASSERT_INT_EQUALS(41, result.x_location_100um);
+    ASSERT_INT_EQUALS(52, result.y_location_100um);
+    return true;
+}
+
 bool test_gcode_decimel_truncation()
 {
     gcode_instruction_t result = { 0 };
@@ -356,6 +365,30 @@ bool test_gcode_multiple_spaces()
     return true;
 }
 
+bool test_gcode_corruption_ascii()
+{
+    gcode_instruction_t result = {
+        .x_location_100um = 100,
+        .y_location_100um = 200,
+    };
+    parse_gcode_line("G01 X1H.182 Y139.234", &result);
+    ASSERT_INT_EQUALS(100, result.x_location_100um);
+    ASSERT_INT_EQUALS(1392, result.y_location_100um);
+    return true;
+}
+
+bool test_gcode_corruption_non_ascii()
+{
+    gcode_instruction_t result = {
+        .x_location_100um = 100,
+        .y_location_100um = 200,
+    };
+    parse_gcode_line("G01 X1.182 Y13" "\xA0" "9.234", &result);
+    ASSERT_INT_EQUALS(11, result.x_location_100um);
+    ASSERT_INT_EQUALS(200, result.y_location_100um);
+    return true;
+}
+
 
 unit_test_t test_list[] = {
     TEST_CASE(test_gcode_basic),
@@ -369,6 +402,7 @@ unit_test_t test_list[] = {
     TEST_CASE(test_gcode_truncate_to_zero),
     TEST_CASE(test_gcode_zero_padded_g),
     TEST_CASE(test_gcode_zero_padded_g_many),
+    TEST_CASE(test_gcode_zero_padding),
     TEST_CASE(test_gcode_basic_comment),
     TEST_CASE(test_gcode_g_comment),
     TEST_CASE(test_gcode_g0_comment),
@@ -390,6 +424,8 @@ unit_test_t test_list[] = {
     TEST_CASE(test_gcode_overflow_y),
     TEST_CASE(test_gcode_leading_spaces),
     TEST_CASE(test_gcode_multiple_spaces),
+    TEST_CASE(test_gcode_corruption_ascii),
+    TEST_CASE(test_gcode_corruption_non_ascii),
 
     {nullptr, nullptr}
 };
