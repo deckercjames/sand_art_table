@@ -67,8 +67,7 @@ void get_next_line(char *buf, unsigned int buf_size)
 
         int val = current_file.read();
 
-        // log_debug_value("reading value", val);
-
+        // EOF
         if (val == -1) {
             break;
         }
